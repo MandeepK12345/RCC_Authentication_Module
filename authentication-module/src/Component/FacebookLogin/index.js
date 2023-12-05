@@ -7,7 +7,7 @@ export default function FacebookLogin(){
     <LoginSocialFacebook
         appId={LoginClientIds.facebookAppId}
         onResolve={(response) => {
-            console.log(response);
+            console.log(response); // Access Token is available in reponse 
             alert("You are logged in using facebook");
         }}
         onReject={(error) => {

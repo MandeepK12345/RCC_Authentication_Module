@@ -36,14 +36,12 @@ export default function Login() {
 	useEffect(() => {
 		const numRegex = new RegExp(/^\d{10}$/); // to consider as phoneNo
 		if (dataLogin?.email?.match(numRegex)) {
-			console.log("data email", dataLogin.email);
 			setPhonePrefix(true);
 		} else {
 			setPhonePrefix(false);
 		}
 	}, [dataLogin.email]);
 
-	console.log("phoneprefix is", phonePrefix);
 	const handleInputChange = (e) => {
 		const { value, name } = e?.target;
 		setDataLogin({ ...dataLogin, [name]: value });
@@ -94,12 +92,6 @@ export default function Login() {
 		}
 	}, [errors]);
 
-	console.log("Google login data is", googleLoginData);
-	console.log(
-		"name and email are",
-		googleLoginData.given_name,
-		googleLoginData.email
-	);
 	const GoogleLogout = () => {
 		googleLogout();
 		setShowLoginButton(true);
@@ -110,8 +102,8 @@ export default function Login() {
 	};
 
 	const googleLoginSuccessHandler = (credentialResponse) => {
-		const credentialResponseDecoded = jwtDecode(credentialResponse.credential);
-		setGoogleLoginData(credentialResponseDecoded);
+		const credentialResponseDecoded = jwtDecode(credentialResponse.credential); 
+		setGoogleLoginData(credentialResponseDecoded);  // Access token is available in googleLoginData
 		setShowLoginButton(false);
 		setShowLogoutButton(true);
 		sessionStorage.setItem("Given_name", credentialResponseDecoded.given_name);
