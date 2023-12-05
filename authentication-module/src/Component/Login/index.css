@@ -1,0 +1,45 @@
+/* .login-wrapper {
+	&__passwordField {
+		position: relative;
+	}
+
+	&__eyeImage {
+		right: 10px;
+		position: absolute;
+		width: 50px;
+		top: 42px;
+	}
+} */
+
+.login-wrapper__passwordField {
+	position: relative;
+}
+
+.login-wrapper__eyeImage {
+	right: 10px;
+	position: absolute;
+	width: 50px !important;
+	top: 42px;
+}
+
+.login-wrapper__label{
+	
+    display: flex;
+	justify-content: center;
+    font-weight: 600;
+    font-size: 30px;
+}
+.mb-3{
+	display: flex;
+	justify-content: space-between;
+}
+
+.googleLogoutBtn{
+	background-color: white;
+	color: red;
+}
+
+.countryCode{
+	position: absolute;
+}
+

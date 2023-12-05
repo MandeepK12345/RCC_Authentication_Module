@@ -1,0 +1,6 @@
+.input-wrapper__errMsg{
+    color: darkred !important;
+    font-weight: 500;
+    margin-top: 10px;
+    display: flex;
+}
