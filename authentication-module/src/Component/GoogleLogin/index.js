@@ -1,7 +1,6 @@
 import { GoogleLogin } from "@react-oauth/google";
 import ButtonComponent from "../Button";
 
-
 export default function GoogleCustomLogin({showLoginButton, showLogoutButton, googleLoginData, googleLoginSuccessHandler, GoogleLogout}) {
 	return (
 		<div>
@@ -13,7 +12,6 @@ export default function GoogleCustomLogin({showLoginButton, showLogoutButton, go
 					}}
 				/>
 			)}
-
 			<span>
 				{googleLoginData.given_name} {googleLoginData.family_name}
 			</span>

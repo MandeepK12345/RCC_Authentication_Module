@@ -27,7 +27,6 @@ export default function InputComponent({
 				disabled={disabled}
 				// readOnly
 			/>
-
 			{error && (
 				<Form.Text className="input-wrapper__errMsg">{error}</Form.Text>
 			)}

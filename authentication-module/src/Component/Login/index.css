@@ -1,16 +1,3 @@
-/* .login-wrapper {
-	&__passwordField {
-		position: relative;
-	}
-
-	&__eyeImage {
-		right: 10px;
-		position: absolute;
-		width: 50px;
-		top: 42px;
-	}
-} */
-
 .login-wrapper__passwordField {
 	position: relative;
 }
@@ -22,8 +9,7 @@
 	top: 42px;
 }
 
-.login-wrapper__label{
-	
+.login-wrapper__label{	
     display: flex;
 	justify-content: center;
     font-weight: 600;
