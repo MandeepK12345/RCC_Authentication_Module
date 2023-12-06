@@ -11,7 +11,7 @@ export default function InputComponent({
 	onClick,
 	onChange,
 	disabled = false,
-	name
+	name,
 }) {
 	return (
 		<Form.Group className="mb-4 input-wrapper">
@@ -25,7 +25,6 @@ export default function InputComponent({
 				onChange={onChange}
 				defaultValue={value}
 				disabled={disabled}
-				// readOnly
 			/>
 			{error && (
 				<Form.Text className="input-wrapper__errMsg">{error}</Form.Text>

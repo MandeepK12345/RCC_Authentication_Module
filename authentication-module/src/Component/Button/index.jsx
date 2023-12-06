@@ -6,7 +6,7 @@ export default function ButtonComponent({
 	label,
 	variant = "primary",
 	classname,
-	disable =true,
+	disable = false,
 	size = "lg",
 }) {
 	return (

@@ -6,18 +6,28 @@ import "react-phone-input-2/lib/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
-import ButtonComponent from "../Button";
-import "./index.css";
-import { useNavigate } from "react-router-dom";
-import ROUTES from "../../helper/constants";
 import { jwtDecode } from "jwt-decode";
 import { googleLogout } from "@react-oauth/google";
-import GoogleCustomLogin from "../GoogleLogin";
 import InputGroup from "react-bootstrap/InputGroup";
-import FacebookLogin from '../../Component/FacebookLogin'
+import ButtonComponent from "../Button";
+import { useNavigate } from "react-router-dom";
+import { routesPath } from "../../Router/routes";
+import GoogleCustomLogin from "../GoogleLogin";
+import FacebookLogin from "../../Component/FacebookLogin";
+import TextMsg from "../../utils/textMessages";
+import "./index.css";
+
+const emailPattren = new RegExp(
+	"^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9]+.)+[a-zA-Z]{2,}$"
+);
+
+const passwordPattren = new RegExp(
+	"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+);
+
+const numRegex = new RegExp(/^\d{10}$/);
 
 export default function Login() {
-	const navigate = useNavigate();
 	const [showPassword, setShowPassword] = React.useState(false);
 	const [dataLogin, setDataLogin] = React.useState({
 		email: "",
@@ -31,10 +41,10 @@ export default function Login() {
 	const [showLogoutButton, setShowLogoutButton] = React.useState(false);
 	const [phonePrefix, setPhonePrefix] = React.useState(false);
 	const [showPhoneField, setShowPhoneField] = React.useState(false);
-	const [phone, setPhone] = React.useState("");
+	const [phoneDropDown, setPhoneDropDown] = React.useState("");
+	const navigate = useNavigate();
 
 	useEffect(() => {
-		const numRegex = new RegExp(/^\d{10}$/); // to consider as phoneNo
 		if (dataLogin?.email?.match(numRegex)) {
 			setPhonePrefix(true);
 		} else {
@@ -50,17 +60,11 @@ export default function Login() {
 
 	const submitHandler = (event) => {
 		event.preventDefault();
-		const emailPattren = new RegExp(
-			"^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9]+.)+[a-zA-Z]{2,}$"
-		);
-		const passwordPattren = new RegExp(
-			"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
-		);
 		const phonePattren = new RegExp("^[0-9]+$");
 		const errors = {};
 		if (phonePrefix) {
 			if (!dataLogin.email.match(phonePattren)) {
-				errors.phone = "Please enter a valid mobile number";
+				errors.phone = TextMsg.Login.validMobile;
 			}
 		} else {
 			if (!dataLogin?.email) {
@@ -76,7 +80,7 @@ export default function Login() {
 		}
 		setErrors({ ...errors });
 		if (!Object.keys(errors).length) {
-			navigate(ROUTES.HOMESCREEN);
+			navigate(routesPath.HOMESCREEN);
 		}
 		if (rememberChecked && dataLogin.email && dataLogin.password) {
 			localStorage.setItem("phoneNo", dataLogin.email);
@@ -102,8 +106,8 @@ export default function Login() {
 	};
 
 	const googleLoginSuccessHandler = (credentialResponse) => {
-		const credentialResponseDecoded = jwtDecode(credentialResponse.credential); 
-		setGoogleLoginData(credentialResponseDecoded);  // Access token is available in googleLoginData
+		const credentialResponseDecoded = jwtDecode(credentialResponse.credential);
+		setGoogleLoginData(credentialResponseDecoded); // Access token is available in googleLoginData
 		setShowLoginButton(false);
 		setShowLogoutButton(true);
 		sessionStorage.setItem("Given_name", credentialResponseDecoded.given_name);
@@ -112,8 +116,21 @@ export default function Login() {
 
 	const showPhoneFieldHandler = () => {
 		setShowPhoneField(true);
+		setPhoneDropDown(dataLogin.email)
 	};
 
+	const fbLoginSuccessHandler = (resp) => {
+		console.info("fbLoginSuccessHandler", resp.data.name);
+		alert( resp.data.name + " logged in using facebook");
+	};
+
+	const fbLoginErrorHandler = (err) => {
+		console.info("fbLoginErrorHandler", err);
+	};
+
+	const inbuiltPhoneHandler=(event)=>{
+		console.info('event',event);
+	}
 	return (
 		<Container className="login-wrapper mt-4">
 			<Form>
@@ -122,10 +139,10 @@ export default function Login() {
 					{showPhoneField ? (
 						<PhoneInput
 							className="phoneInput"
-							country={"in"}
+							country="in"
 							enableSearch={true}
-							value={"+91" + dataLogin.email}
-							onChange={(phone) => setPhone(phone)}
+							value={phoneDropDown}
+							onChange={inbuiltPhoneHandler}
 						/>
 					) : (
 						<>
@@ -139,10 +156,10 @@ export default function Login() {
 									</InputGroup.Text>
 									<Form.Control
 										type="text"
-										onChange={handleInputChange}
 										label="Email/Phone no."
 										placeholder="Enter your Email or Phone No."
 										name="email"
+										onChange={handleInputChange}
 										value={dataLogin.email}
 										error={errors.email}
 									/>
@@ -150,10 +167,10 @@ export default function Login() {
 							) : (
 								<InputComponent
 									type="text"
-									onChange={handleInputChange}
 									label="Email/Phone no."
 									placeholder="Enter your Email or Phone No."
 									name="email"
+									onChange={handleInputChange}
 									value={dataLogin.email}
 									error={errors.email}
 								/>
@@ -161,23 +178,25 @@ export default function Login() {
 						</>
 					)}
 				</Row>
+
 				<Row className="mb-3 login-wrapper__passwordField">
 					<InputComponent
 						type={showPassword ? "text" : "password"}
-						onChange={handleInputChange}
 						label="Password"
 						name="password"
 						placeholder="Enter your Password"
+						onChange={handleInputChange}
 						value={dataLogin.password}
 						error={errors.password}
 					/>
 					<img
 						src={Images.VisibilityIcon}
-						onClick={() => setShowPassword(!showPassword)}
 						className="login-wrapper__eyeImage"
+						onClick={() => setShowPassword(!showPassword)}
 					/>
 				</Row>
-				<Row>
+
+				<Row className="mt-2">
 					<Form.Group className="mb-3">
 						<Form.Check
 							type="checkbox"
@@ -186,36 +205,41 @@ export default function Login() {
 						/>
 						<a
 							onClick={() => {
-								navigate(ROUTES.FORGOTPASSWORD);
+								navigate(routesPath.FORGOTPASSWORD);
 							}}
-							href="#"
+							href="javascript:void(0)"
 							class="link-primary"
 						>
 							Forgot Password
 						</a>
 					</Form.Group>
 				</Row>
-				{disableSubmitButton ? (
-					<ButtonComponent label="Submit" btnHandler={submitHandler} disable />
-				) : (
-					<ButtonComponent label="Submit" btnHandler={submitHandler} />
-				)}
-				<Row>
-					<p>
-						Don't have account yet ? <span></span>
+
+				<ButtonComponent
+					label="Submit"
+					btnHandler={submitHandler}
+					disable={disableSubmitButton}
+				/>
+
+				<Row className="mt-2">
+					<div>
+						<span>Don't have account yet ?</span>
 						<a
-							onClick={() => {
-								navigate(ROUTES.SIGNUP);
-							}}
-							href="#"
+							onClick={() => navigate(routesPath.SIGNUP)}
+							href="javascript:void(0)"
 							class="link-primary"
 						>
 							Signup
 						</a>
-					</p>
+					</div>
 				</Row>
 			</Form>
-			<FacebookLogin/>
+
+			<FacebookLogin
+				fbLoginSuccessHandler={fbLoginSuccessHandler}
+				fbLoginErrorHandler={fbLoginErrorHandler}
+			/>
+
 			<GoogleCustomLogin
 				showLoginButton={showLoginButton}
 				showLogoutButton={showLogoutButton}
