@@ -16,6 +16,8 @@ import GoogleCustomLogin from "../GoogleLogin";
 import FacebookLogin from "../../Component/FacebookLogin";
 import TextMsg from "../../utils/textMessages";
 import "./index.css";
+import LinkedInPage from '../LinkedIn';
+import postApiCall from "../../api/methods";
 
 const emailPattren = new RegExp(
 	"^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9]+.)+[a-zA-Z]{2,}$"
@@ -245,8 +247,10 @@ export default function Login() {
 				showLogoutButton={showLogoutButton}
 				googleLoginSuccessHandler={googleLoginSuccessHandler}
 				googleLoginData={googleLoginData}
-				GoogleLogout={GoogleLogout}
+				Google
+				Logout={GoogleLogout}
 			/>
+			<LinkedInPage/>
 		</Container>
 	);
 }

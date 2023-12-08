@@ -1,7 +1,13 @@
 import { GoogleLogin } from "@react-oauth/google";
 import ButtonComponent from "../Button";
 
-export default function GoogleCustomLogin({showLoginButton, showLogoutButton, googleLoginData, googleLoginSuccessHandler, GoogleLogout}) {
+export default function GoogleCustomLogin({
+	showLoginButton,
+	showLogoutButton,
+	googleLoginData,
+	googleLoginSuccessHandler,
+	GoogleLogout,
+}) {
 	return (
 		<div>
 			{showLoginButton && (
