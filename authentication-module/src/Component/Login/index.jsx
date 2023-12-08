@@ -68,15 +68,15 @@ export default function Login() {
 			}
 		} else {
 			if (!dataLogin?.email) {
-				errors.email = "Email / Phone is required";
+				errors.email = TextMsg.Login.emailOrPhoneRequired;
 			} else if (!dataLogin?.email?.match(emailPattren)) {
-				errors.email = "Please enter a valid email address";
+				errors.email = TextMsg.Login.validEmail;
 			}
 		}
 		if (!dataLogin.password) {
-			errors.password = "Password is not defined";
+			errors.password = TextMsg.Login.passwordUndefined;
 		} else if (!dataLogin.password.match(passwordPattren)) {
-			errors.password = "Please enter a valid password";
+			errors.password = TextMsg.Login.validPassword;
 		}
 		setErrors({ ...errors });
 		if (!Object.keys(errors).length) {
