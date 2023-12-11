@@ -16,8 +16,10 @@ import GoogleCustomLogin from "../GoogleLogin";
 import FacebookLogin from "../../Component/FacebookLogin";
 import TextMsg from "../../utils/textMessages";
 import "./index.css";
-import LinkedInPage from '../LinkedIn';
+import LinkedInPage from "../LinkedIn";
 import postApiCall from "../../api/methods";
+import endPoint from "../../api/endPoint";
+
 
 const emailPattren = new RegExp(
 	"^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9]+.)+[a-zA-Z]{2,}$"
@@ -88,6 +90,29 @@ export default function Login() {
 			localStorage.setItem("phoneNo", dataLogin.email);
 			localStorage.setItem("password", dataLogin.password);
 		}
+		const { email, password } = dataLogin;
+		const payload ={
+			email,
+			password
+		}
+
+		// if(!phonePrefix){
+		postApiCall(
+			endPoint.userLogin,
+			payload, // Phone and password API call
+			(s)=>{
+				console.log("success", s);
+			},
+			(e) => {
+				if (errors.email || errors.phone || errors.password) {
+					console.log(errors, 'error')
+				} else {
+				  console.log(null, 'error')
+				}
+			  }
+		);
+		// }
+
 	};
 	const handleRememberCheck = () => {
 		setRememberChecked(!rememberChecked);
@@ -118,21 +143,21 @@ export default function Login() {
 
 	const showPhoneFieldHandler = () => {
 		setShowPhoneField(true);
-		setPhoneDropDown(dataLogin.email)
+		setPhoneDropDown(dataLogin.email);
 	};
 
 	const fbLoginSuccessHandler = (resp) => {
 		console.info("fbLoginSuccessHandler", resp.data.name);
-		alert( resp.data.name + " logged in using facebook");
+		alert(resp.data.name + " logged in using facebook");
 	};
 
 	const fbLoginErrorHandler = (err) => {
 		console.info("fbLoginErrorHandler", err);
 	};
 
-	const inbuiltPhoneHandler=(event)=>{
-		console.info('event',event);
-	}
+	const inbuiltPhoneHandler = (event) => {
+		console.info("event", event);
+	};
 	return (
 		<Container className="login-wrapper mt-4">
 			<Form>
@@ -250,7 +275,7 @@ export default function Login() {
 				Google
 				Logout={GoogleLogout}
 			/>
-			<LinkedInPage/>
+			<LinkedInPage />
 		</Container>
 	);
 }

@@ -34,40 +34,43 @@ export const checkUserValidation = (statusCode) => {
  * @param successCallback
  */
 
+
 const postApiCall = (
     endPoint,
     params,
     successCallback,
     errorCalback
   ) => {
-    Api.axiosInstance
+    Api
       .post(endPoint, params)
       .then((response) => {
         successCallback(response)
       })
       .catch((error) => {
-        if (error.message === 'Network Error') {
-          // TODO: netword error
-        } else if (error.code === 'ECONNABORTED') {
-          const payload = {
-            data: {
-              statusCode: 408,
-            },
-          }
-          errorCalback(payload)
-        } else if (error.response) {
-          if (checkUserValidation(error.response.status)) {
-            handleUnauthorisedUser()
-          }
-          errorCalback(error.response)
-        } else if (!error.response) {
-          const payload = {
-            data: {
-              statusCode: '',
-            },
-          }
-          errorCalback(payload)
-        }
+        // if (error.message === 'Network Error') {
+        //   // TODO: netword error
+        // } else if (error.code === 'ECONNABORTED') {
+        //   const payload = {
+        //     data: {
+        //       statusCode: 408,
+        //     },
+        //   }
+        //   errorCalback(payload)
+        // } else if (error.response) {
+        //   if (checkUserValidation(error.response.status)) {
+        //     handleUnauthorisedUser()
+        //   }
+        //   errorCalback(error.response)
+        // } else if (!error.response) {
+        //   const payload = {
+        //     data: {
+        //       statusCode: '',
+        //     },
+        //   }
+        //   errorCalback(payload)
+        // }
+        console.log("error occured", error);
+        errorCalback(error);
       })
   }
 
