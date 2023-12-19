@@ -4,7 +4,9 @@ const TextMsg = {
 		validEmail: "Please enter a valid email address",
 		validPassword: "Please enter a valid password",
 		passwordUndefined: "Password is not defined",
-		emailOrPhoneRequired : "Email / Phone is required"
+		emailOrPhoneRequired : "Email / Phone is required",
+		enterEmailOrPhone : "Enter your Email or Phone No.",
+		enterPassword : "Enter your Password"
 	},
 };
 

@@ -16,16 +16,7 @@ import GoogleCustomLogin from "../GoogleLogin";
 import FacebookLogin from "../../Component/FacebookLogin";
 import TextMsg from "../../utils/textMessages";
 import "./index.css";
-
-const emailPattren = new RegExp(
-	"^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9]+.)+[a-zA-Z]{2,}$"
-);
-
-const passwordPattren = new RegExp(
-	"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
-);
-
-const numRegex = new RegExp(/^\d{10}$/);
+import {emailPattern, passwordPattern, numRegex} from "../../utils/common";
 
 export default function Login() {
 	const [showPassword, setShowPassword] = React.useState(false);
@@ -69,13 +60,13 @@ export default function Login() {
 		} else {
 			if (!dataLogin?.email) {
 				errors.email = TextMsg.Login.emailOrPhoneRequired;
-			} else if (!dataLogin?.email?.match(emailPattren)) {
+			} else if (!dataLogin?.email?.match(emailPattern)) {
 				errors.email = TextMsg.Login.validEmail;
 			}
 		}
 		if (!dataLogin.password) {
 			errors.password = TextMsg.Login.passwordUndefined;
-		} else if (!dataLogin.password.match(passwordPattren)) {
+		} else if (!dataLogin.password.match(passwordPattern)) {
 			errors.password = TextMsg.Login.validPassword;
 		}
 		setErrors({ ...errors });
@@ -157,7 +148,7 @@ export default function Login() {
 									<Form.Control
 										type="text"
 										label="Email/Phone no."
-										placeholder="Enter your Email or Phone No."
+										placeholder={TextMsg.Login.enterEmailOrPhone}
 										name="email"
 										onChange={handleInputChange}
 										value={dataLogin.email}
@@ -168,7 +159,7 @@ export default function Login() {
 								<InputComponent
 									type="text"
 									label="Email/Phone no."
-									placeholder="Enter your Email or Phone No."
+									placeholder={TextMsg.Login.enterEmailOrPhone}
 									name="email"
 									onChange={handleInputChange}
 									value={dataLogin.email}
@@ -184,7 +175,7 @@ export default function Login() {
 						type={showPassword ? "text" : "password"}
 						label="Password"
 						name="password"
-						placeholder="Enter your Password"
+						placeholder={TextMsg.Login.enterPassword}
 						onChange={handleInputChange}
 						value={dataLogin.password}
 						error={errors.password}
