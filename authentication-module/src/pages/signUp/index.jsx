@@ -23,8 +23,8 @@ import {
 import "./index.css";
 
 const signUpToggle = [
-	{ name: "SignUp with email", value: "1" },
-	{ name: "SignUp with phone", value: "2" },
+	{ name: TextMsg.SignUp.signUpToggleEmail , value: "1" },
+	{ name: TextMsg.SignUp.signUpTogglePhone , value: "2" },
 ];
 
 export default function Signup() {
@@ -77,7 +77,7 @@ export default function Signup() {
 		}
 
 		if (password !== confirmPassword) {
-			errors.confirmPassword = "confirm password should be same";
+			errors.confirmPassword = TextMsg.SignUp.confirmPasswordField;
 		}
 		setErrors({ ...errors });
 		if (!Object.keys(errors).length) {
@@ -178,7 +178,7 @@ export default function Signup() {
 	return (
 		<Container className="login-wrapper mt-4">
 			<Form>
-				<Row className="login-wrapper__label mb-4">Register Form</Row>
+				<Row className="login-wrapper__label mb-4">{TextMsg.SignUp.registerForm}</Row>
 				<Row>
 					<ButtonGroup className="mb-2 toggleBtn">
 						{signUpToggle.map((radio, idx) => (
@@ -207,7 +207,7 @@ export default function Signup() {
 						/>
 					) : (
 						<>
-							<InputGroup className="mb-4">
+							<InputGroup className="mb-3">
 								{radioValue === "2" && (
 									<InputGroup.Text
 										id="basic-addon1"
@@ -219,7 +219,7 @@ export default function Signup() {
 								<Form.Control
 									type="text"
 									placeholder={
-										radioValue === "1" ? "Enter your Email" : "Enter your Phone"
+										radioValue === "1" ? TextMsg.Login.radioValueEmail : TextMsg.Login.radioValuePhone
 									}
 									name="email"
 									onChange={handleInputChange}
@@ -239,7 +239,7 @@ export default function Signup() {
 						type="password"
 						label="Create Password"
 						name="password"
-						placeholder="Enter your new Password"
+						placeholder={TextMsg.SignUp.newPassword}
 						onChange={handleInputChange}
 						value={dataLogin.password}
 						error={errors.password}
@@ -250,7 +250,7 @@ export default function Signup() {
 						type={showConfirmPassword ? "text" : "password"}
 						label="Confirm Password"
 						name="confirmPassword"
-						placeholder="Confirm your new Password"
+						placeholder={TextMsg.SignUp.confirmPassword}
 						onChange={handleInputChange}
 						value={dataLogin.confirmPassword}
 						error={errors.confirmPassword}

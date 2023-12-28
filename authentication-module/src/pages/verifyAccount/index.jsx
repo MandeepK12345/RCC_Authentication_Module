@@ -1,10 +1,11 @@
 import { Row, Container } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import endPoint from "../../api/endPoint";
 import ButtonComponent from "../../components/button";
-import { postApiCall} from "../../api/methods";
+import { postApiCall } from "../../api/methods";
+import { setUser } from "../../state";
 import { routesPath } from "../../router/routes";
 import TextMsg from "../../constants/textMessages";
 import "./index.css";
@@ -17,21 +18,31 @@ export default function VerifyAccount() {
 	const navigate = useNavigate();
 	const userInfo = useSelector((state) => state?.user);
 	const location = useLocation();
-	const forgotPasswordEmail = location?.state?.forgotPasswordEmail;
+	const dispatch = useDispatch();
+	const { from, contextInfo } = location?.state || {};
+	const fromForgotPaswordScreen = from === "forgotPassword";
 
-	const generatePayLoad=()=>{
+	const generatePayLoad = () => {
 		const { otp1, otp2, otp3, otp4 } = otpData;
 		let code = undefined;
 		if (otp1 && otp2 && otp3 && otp4) code = `${otp1}${otp2}${otp3}${otp4}`;
 
-		const { email, countryCode, mobileNo } = userInfo||{};
+		const { email, countryCode, mobileNo } = userInfo || {};
 		const phoneNo = mobileNo?.substr(countryCode?.length);
 
 		let payload = {
 			code: parseInt(code),
 			email,
 		};
-		if (phoneNo) {
+
+		if(from==='login'){
+			payload = {
+				countryCode:contextInfo.countryCode,
+				phoneNo: contextInfo.mobile,
+				code: 4321 || parseInt(code), // for now hardcoded , will remove it
+			};
+		}
+		else if (phoneNo) {
 			payload = {
 				countryCode,
 				phoneNo: phoneNo,
@@ -39,25 +50,29 @@ export default function VerifyAccount() {
 			};
 		}
 
-		return {payload, code }
-	}
+		return { payload, code };
+	};
 
-	const otpApi = (endPoint,payload,fromResendOtp)=>{
+	const otpApi = (endPoint, payload, fromResendOtp) => {
 		postApiCall(
-		 	endPoint,
+			endPoint,
 			payload,
 			(response) => {
 				const {
-					data: { statusCode, data, message },
+					data: { statusCode, message,data },
 				} = response;
 				if (statusCode === 200) {
 					toast.success(message);
-					if(fromResendOtp) return;
+					if (fromResendOtp) return;
+					if(from==='login'){
+						dispatch(setUser({ ...data }));
+					}
 
-					if(forgotPasswordEmail)
-					navigate(routesPath.RESETPASSWORD,{state:{resetEmail:forgotPasswordEmail}});
-					else
-					navigate(routesPath.DASHBOARD);
+					if (fromForgotPaswordScreen)
+						navigate(routesPath.RESETPASSWORD, {
+							state: { resetEmail: contextInfo.email },
+						});
+					else navigate(routesPath.DASHBOARD);
 				}
 			},
 			(error) => {
@@ -69,16 +84,18 @@ export default function VerifyAccount() {
 				toast.error(message);
 			}
 		);
-	}
+	};
 
 	const validateOtp = () => {
-		const {code,payload}= generatePayLoad();
+		const { code, payload } = generatePayLoad();
 		if (code) {
-			const url=forgotPasswordEmail ? endPoint.validateForgotPassword : endPoint.verify;
-			const apiPayLoad = forgotPasswordEmail
-			? { email: forgotPasswordEmail, otp: parseInt(code) }
-			: payload;
-			otpApi(url,apiPayLoad)
+			const url = fromForgotPaswordScreen
+				? endPoint.validateForgotPassword
+				: endPoint.verify;
+			const apiPayLoad = fromForgotPaswordScreen
+				? { email: contextInfo.email, otp: parseInt(code) }
+				: payload;
+			otpApi(url, apiPayLoad);
 		}
 	};
 
@@ -125,24 +142,39 @@ export default function VerifyAccount() {
 		}
 	};
 
-	const resendOtp = ()=>{
-        otpApi(endPoint.resendOtp,{email:forgotPasswordEmail},true)
-	}
+	const resendOtp = () => {
+		otpApi(endPoint.resendOtp, { email: contextInfo.email }, true);
+	};
+
+	const getMessages = () => {
+		let result = null;
+		switch (from) {
+			case "login": {
+				result = <span>mobile number {contextInfo.mobile}</span>;
+				break;
+			}
+			case "forgotPassword": {
+				result = <span>email i.e {contextInfo.email}</span>;
+				break;
+			}
+			default: {
+				result = <span>
+					{userInfo?.mobileNo ? "mobile number" : " email"} i.e.{" "}
+					{userInfo?.mobileNo}
+					{userInfo?.email}
+				</span>;
+				break;
+			}
+		}
+		return result;
+	};
 
 	return (
 		<Container className="alignCentre verifyAccount-wrapper">
 			<h1>{TextMsg.VerifyAccount.verifyAccount}</h1>
 			<p className="mt-15">
-				{TextMsg.VerifyAccount.sentOTP}{" "}
-				{forgotPasswordEmail ? (
-					<span>email i.e {forgotPasswordEmail}</span>
-				) : (
-					<span>
-						{userInfo?.mobileNo ? "mobile number" : "email"} i.e.{" "}
-						{userInfo?.mobileNo}
-						{userInfo?.email}
-					</span>
-				)}
+				{TextMsg.VerifyAccount.sentOTP}
+				{getMessages()}
 			</p>
 
 			<Row className="inputfieldContainer mt-15">
@@ -164,15 +196,13 @@ export default function VerifyAccount() {
 			<Row className="mt-15">
 				<ButtonComponent label="VERIFY OTP" btnHandler={validateOtp} />
 			</Row>
-			<Row className="mt-2">
-					 <a
-						onClick={resendOtp}
-						href="javascript:void(0)"
-						class="link-primary"
-					>
+			{fromForgotPaswordScreen && (
+				<Row className="mt-2">
+					<a onClick={resendOtp} href="javascript:void(0)" class="link-primary">
 						{TextMsg.VerifyAccount.resendOTP}
 					</a>
 				</Row>
+			)}
 		</Container>
 	);
 }

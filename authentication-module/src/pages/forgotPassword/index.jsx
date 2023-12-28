@@ -39,9 +39,7 @@ function ForgotPassword() {
 				(response) => {
 					if (response?.data.httpCode === 200) {
 						toast.success(response.data.message);
-						navigate(routesPath.VERIFY, {state:{
-							forgotPasswordEmail: email,
-						}});
+						navigate(routesPath.VERIFY, {state:{from:'forgotPassword',contextInfo:{email:email}}});
 					}
 				},
 				(error) => {
@@ -60,7 +58,7 @@ function ForgotPassword() {
 		<Container className="login-wrapper mt-4">
 			<Form>
 				<Row className="forgotPassword-wrapper__label mb-4">
-					{TextMsg.ForgotPassword.forogtYourPassword}
+					{TextMsg.ForgotPassword.forgotYourPassword}
 				</Row>
 				<Row>
 					<InputComponent
