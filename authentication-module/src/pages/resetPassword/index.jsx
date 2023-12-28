@@ -21,6 +21,7 @@ function ResetPassword() {
 	const[resetPasswordData, setResetPasswordData]=useState({});
 	const [errors, setErrors] = React.useState({});
 	const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+	const [showPassword, setShowPassword] = React.useState(false);
 	const navigate = useNavigate();
 	const location= useLocation();
 
@@ -84,7 +85,7 @@ function ResetPassword() {
 			<Form>
 				<Row className="login-wrapper__passwordField">
 					<InputComponent
-						type="password"
+						type={showPassword ? "text" : "password"}
 						label="Create Password"
 						name="password"
 						placeholder={TextMsg.SignUp.newPassword}
@@ -95,7 +96,7 @@ function ResetPassword() {
 					<img
 						src={Images.VisibilityIcon}
 						className="login-wrapper__eyeImage"
-						onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+						onClick={() => setShowPassword(!showPassword)}
 						alt="eyeImage"
 					/>
 				</Row>

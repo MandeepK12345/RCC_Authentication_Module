@@ -63,7 +63,7 @@ export default function Signup() {
 		} else if (radioValue === "1" && email && !email.match(emailPattern)) {
 			errors.email = TextMsg.Login.validEmail;
 		}
-
+		if (radioValue === "1") {
 		if (!password) {
 			errors.password = TextMsg.Login.passwordUndefined;
 		} else if (!password.match(passwordPattern)) {
@@ -79,6 +79,7 @@ export default function Signup() {
 		if (password !== confirmPassword) {
 			errors.confirmPassword = TextMsg.SignUp.confirmPasswordField;
 		}
+	}
 		setErrors({ ...errors });
 		if (!Object.keys(errors).length) {
 			//login api call
@@ -234,6 +235,8 @@ export default function Signup() {
 						</>
 					)}
 				</Row>
+				{radioValue === "1" && (
+				<>
 				<Row className="login-wrapper__passwordField">
 					<InputComponent
 						type="password"
@@ -262,6 +265,8 @@ export default function Signup() {
 						alt="eyeImage"
 					/>
 				</Row>
+				</>
+				)}
 
 				<Row className="mt5">
 					<ButtonComponent
