@@ -1,0 +1,41 @@
+.inputfieldContainer {
+	display: flex;
+	justify-content: center;
+
+	gap: 28px;
+}
+
+.otpInput {
+	height: 3em;
+	width: 3em;
+	border: 2px solid #dad9df;
+	outline: none;
+	text-align: center;
+	font-size: 1.5em;
+	border-radius: 0.3em;
+	background-color: #ffffff;
+	outline: none;
+}
+
+
+.alignCentre {
+	text-align: center;
+}
+.resendLink {
+	color: #000;
+
+	font-size: 16px;
+
+	font-weight: 600;
+    cursor: pointer;
+    
+    
+}
+.mt-15{
+    margin-top: 15px;
+}
+.verifyAccount-wrapper{
+	display: flex;
+    align-items: center;
+    flex-direction: column;
+}

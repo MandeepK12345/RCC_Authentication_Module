@@ -1,14 +1,16 @@
-// import logo from './logo.svg';
-import "./App.css";
 import { BrowserRouter } from "react-router-dom";
-
-import RoutesWrapper from "./Router";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import RoutesWrapper from "./router";
 
 function App() {
 	return (
-		<BrowserRouter>
-			<RoutesWrapper />
-		</BrowserRouter>
+		<div className="App">
+			<ToastContainer />
+			<BrowserRouter>
+				<RoutesWrapper />
+			</BrowserRouter>
+		</div>
 	);
 }
 

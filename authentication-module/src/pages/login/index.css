@@ -5,8 +5,8 @@
 .login-wrapper__eyeImage {
 	right: 10px;
 	position: absolute;
-	width: 50px !important;
-	top: 42px;
+	width: 40px ;
+	top: 35px;
 }
 
 .login-wrapper__label{	
@@ -20,12 +20,27 @@
 	justify-content: space-between;
 }
 
-.googleLogoutBtn{
-	background-color: white;
-	color: red;
+.mt5{
+	margin-top: 5px;
 }
+
 
 .countryCode{
 	position: absolute;
+}
+
+.toggleBtn{
+	.btn-check{
+		display: none;
+	}
+}
+.toggle-active{
+	background:#007bff !important;
+}
+
+.phoneInput{
+	.form-control{
+		width: 100%;
+	}
 }
 
