@@ -52,6 +52,7 @@ export default function VerifyAccount() {
 	};
 
 	const otpApi = (endPoint, payload, fromResendOtp) => {
+		
 		postApiCall(
 			endPoint,
 			payload,
@@ -59,7 +60,7 @@ export default function VerifyAccount() {
 				const {
 					data: { statusCode, message, data },
 				} = response;
-				if (statusCode === 200) {
+				if (statusCode === 200 || statusCode === 201) {
 					toast.success(message, {
 						toastId: "verifyAccountSuccess",
 					});
@@ -89,16 +90,28 @@ export default function VerifyAccount() {
 		);
 	};
 
+	const getUrl =()=>{
+		switch(from){
+			case "login" :{
+				return endPoint.verifyLoginOtp;
+			}
+			case "forgotPassword":{
+				return endPoint.validateForgotPassword;
+			}
+			default :{
+				return endPoint.verifySignupOtp;
+			}
+				 
+		}
+	}
+
 	const validateOtp = () => {
 		const { code, payload } = generatePayLoad();
 		if (code) {
-			const url = fromForgotPaswordScreen
-				? endPoint.validateForgotPassword
-				: endPoint.verify;
 			const apiPayLoad = fromForgotPaswordScreen
 				? { email: contextInfo.email, otp: parseInt(code) }
 				: payload;
-			otpApi(url, apiPayLoad);
+			otpApi(getUrl(), apiPayLoad);
 		}
 	};
 

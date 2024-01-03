@@ -21,9 +21,9 @@ export default function Dashboard() {
 
 	return (
 		<Container fluid className="alignCentre p-0">
-			<Row className="user-dashboard">User Dashboard</Row>
+			<Row className="user-dashboard">Home Page</Row>
 			<Row className="user-dashboard m-0">
-				Welcome :{" "}
+				Welcome   {" "}
 				<span>
 					{mobileNo}
 					{email}

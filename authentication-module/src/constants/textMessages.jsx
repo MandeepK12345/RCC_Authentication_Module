@@ -11,7 +11,7 @@ const TextMsg = {
 		radioValueEmail : "Please Enter Your Email Address",
 		radioValuePhone : "Please Enter Your Phone Number",
 		loginPassword : "Please Enter Your Password",
-		loginForm : "Login Form",
+		loginForm : "Login Page",
 		dontHaveAccount : "Don't have account yet?    ",
 	},
 	ForgotPassword: {
@@ -27,7 +27,7 @@ const TextMsg = {
 		confirmPasswordField : "Password doesn't match with confirm password",
 		newPassword : "Please Enter Your Password",
 		confirmPassword : "Confirm Your Password",
-		registerForm : "Register Form",
+		registerForm : "SignUp Page ",
 		signUp : "   Signup"
 	},
 	VerifyAccount :{

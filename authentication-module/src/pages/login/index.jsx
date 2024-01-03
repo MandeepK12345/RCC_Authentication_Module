@@ -47,22 +47,27 @@ export default function Login() {
 	const handleInputChange = (e) => {
 		const { value, name } = e?.target;
 		const errors = {};
-		if (name === "email" && radioValue === "2") {	
-				if (value.length < 7) {
-					errors.email = "Phone number field should contain minimum 7 digits";
-
-				} else if (value.length > 15) {
-					errors.email = "Phone number field should contain maximum 15 digits";
-				}
-				setErrors({ ...errors });	
+		if (name === "email" && radioValue === "2") {
+			if (value.length < 7) {
+				errors.email = "Phone number field should contain minimum 7 digits";
+			} else if (value.length > 15) {
+				errors.email = "Phone number field should contain maximum 15 digits";
+			}
+			setErrors({ ...errors });
 		}
-		
-		setDataLogin(() => ({ ...dataLogin, [name]: value?.replace(/ /g, "") }));		
+
+		setDataLogin(() => ({ ...dataLogin, [name]: value?.replace(/ /g, "") }));
 	};
 
-	useEffect(()=>{
-		setDisableSubmitButton((dataLogin?.email?.length && dataLogin?.password?.length) ? false : true);
-	},[dataLogin.email, dataLogin.password]);
+	useEffect(() => {
+		if (radioValue === "1") {
+			setDisableSubmitButton(
+				dataLogin?.email?.length && dataLogin?.password?.length ? false : true
+			);
+		} else if (radioValue === "2") {
+			setDisableSubmitButton(dataLogin?.email?.length ? false : true);
+		}
+	}, [dataLogin.email, dataLogin.password]);
 
 	// Login handler
 	const submitHandler = (event) => {
@@ -238,9 +243,9 @@ export default function Login() {
 							error={errors.password}
 						/>
 						<img
-							src={showPassword?Images.showEye:Images.hideEye}
+							src={showPassword ? Images.showEye : Images.hideEye}
 							// className="login-wrapper__eyeImage"
-							className='login-wrapper__eyeImage'
+							className="login-wrapper__eyeImage"
 							onClick={() => setShowPassword(!showPassword)}
 							alt="eyeImage"
 						/>

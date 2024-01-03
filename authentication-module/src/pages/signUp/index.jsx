@@ -50,7 +50,13 @@ export default function Signup() {
 	};
 
 	useEffect(()=>{
+		if(radioValue === "1"){
 		setDisableSubmitButton((dataLogin?.email?.length && dataLogin?.password?.length && dataLogin?.confirmPassword?.length) ? false : true);
+		}
+		else if(radioValue === "2"){
+			setDisableSubmitButton((dataLogin?.email?.length) ? false : true);
+		}
+	
 	},[dataLogin.email, dataLogin.password, dataLogin.confirmPassword]);
 
 	const submitHandler = (event) => {
