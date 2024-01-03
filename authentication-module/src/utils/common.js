@@ -10,3 +10,7 @@ export const numRegex = new RegExp(/^\d{10}$/);
 
 export const phonePattern = new RegExp("^[0-9]+$");
 
+export const enums={
+	LOGIN:'login',
+	FORGOTPASSWORD:'forgotPassword'
+}

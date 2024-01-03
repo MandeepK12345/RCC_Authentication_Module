@@ -168,11 +168,10 @@ export default function Login() {
 	};
 
 	return (
-		<Container className="login-wrapper mt-4">
-			<Form>
-				<Row className="login-wrapper__label mb-4">
-					{TextMsg.Login.loginForm}
-				</Row>
+		<Container className="authForm login-wrapper">
+			   <h1>Welcome back</h1>
+      		   <p>Welcome back! Please enter your details.</p>
+			<Form  className="form">
 				<Row>
 					<ButtonGroup className="mb-2 toggleBtn">
 						{loginToggle.map((radio, idx) => (

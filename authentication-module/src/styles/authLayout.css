@@ -1,0 +1,93 @@
+.rccAuthContainer {
+	overflow: hidden;
+	.rccAuthHeader {
+		background-color: #ffffff;
+		border-bottom: 1px solid #f3f4f6;
+		width: 100%;
+		padding: 20px 30px;
+	}
+
+	.rccAuthBody {
+		display: flex;
+		height: calc(100vh - 105px);
+		.slider,
+		.componentContainer {
+			width: 50%;
+			height: 100%;
+		}
+		.slider img {
+			height: 100%;
+			width: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+		.componentContainer {
+            margin-top: 40px;
+			/* display: flex;
+			align-items: center;
+			overflow: auto; */
+			/* padding: 25px 0; */
+			height: calc(100vh - 100px);
+            .authForm{
+                max-width: 400px;
+                margin: 0 auto;
+                &>h1{
+                    font-family: "Poppins";
+                    font-weight: 600;
+                    font-size: 36px;
+                    color:#000000;
+                    line-height: 1;
+                    text-align: center;
+                }
+                &>p{
+                    font-family: "Poppins";
+                    font-weight: 400;
+                    font-size: 18px;
+                    color: #6c737f;
+                    line-height: 1.5;
+                    text-align: center;
+                }
+                .form{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    margin-top: 30px;
+                    .otpField{
+                        max-width: 232px;
+                        display: flex;
+                        gap: 24px;
+                        margin: 0 auto;
+                        input{
+                            text-align: center;
+                        }
+                    }
+                    .burronWrapper{
+                        margin: 10px 0;
+                    }
+                    .otpForm{
+                        max-width: 230px;
+                        margin: 0 auto;
+                        .burronWrapper{
+                            margin: 30px 0;
+                        }
+                    }
+                }
+            }
+		}
+	}
+}
+
+.signupLink{
+    &>p{
+        font-family: "Poppins";
+        font-weight: 400;
+        font-size: 16px;
+        color:#000000;
+        line-height: 1.4;
+        text-align: center;
+    }
+    button{
+        padding: 0 ;
+        font-size: 16px
+    }
+}

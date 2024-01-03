@@ -32,8 +32,8 @@ const TextMsg = {
 	},
 	VerifyAccount :{
 		verifyAccount : "Verify your Account",
-		sentOTP : "We have just sent an OTP to your registered",
-		resendOTP : " Resend Otp"
+		sentOTP : "We have just sent an OTP to",
+		resendOTP : "Resend"
 	},
 	ApiConfig : {
 		deviceId : "abc@123",

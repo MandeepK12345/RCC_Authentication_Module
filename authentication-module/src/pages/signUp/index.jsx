@@ -23,8 +23,8 @@ import {
 import "./index.css";
 
 const signUpToggle = [
-	{ name: TextMsg.SignUp.signUpToggleEmail , value: "1" },
-	{ name: TextMsg.SignUp.signUpTogglePhone , value: "2" },
+	{ name: TextMsg.SignUp.signUpToggleEmail, value: "1" },
+	{ name: TextMsg.SignUp.signUpTogglePhone, value: "2" },
 ];
 
 export default function Signup() {
@@ -45,19 +45,23 @@ export default function Signup() {
 
 	const handleInputChange = (e) => {
 		const { value, name } = e?.target;
-		setDataLogin(()=>({ ...dataLogin, [name]: value?.replace(/ /g, "") }));
+		setDataLogin(() => ({ ...dataLogin, [name]: value?.replace(/ /g, "") }));
 		setErrors({});
 	};
 
-	useEffect(()=>{
-		if(radioValue === "1"){
-		setDisableSubmitButton((dataLogin?.email?.length && dataLogin?.password?.length && dataLogin?.confirmPassword?.length) ? false : true);
+	useEffect(() => {
+		if (radioValue === "1") {
+			setDisableSubmitButton(
+				dataLogin?.email?.length &&
+					dataLogin?.password?.length &&
+					dataLogin?.confirmPassword?.length
+					? false
+					: true
+			);
+		} else if (radioValue === "2") {
+			setDisableSubmitButton(dataLogin?.email?.length ? false : true);
 		}
-		else if(radioValue === "2"){
-			setDisableSubmitButton((dataLogin?.email?.length) ? false : true);
-		}
-	
-	},[dataLogin.email, dataLogin.password, dataLogin.confirmPassword]);
+	}, [dataLogin.email, dataLogin.password, dataLogin.confirmPassword]);
 
 	const submitHandler = (event) => {
 		event.preventDefault();
@@ -74,22 +78,22 @@ export default function Signup() {
 			errors.email = TextMsg.Login.validEmail;
 		}
 		if (radioValue === "1") {
-		if (!password) {
-			errors.password = TextMsg.Login.passwordUndefined;
-		} else if (!password.match(passwordPattern)) {
-			errors.password = TextMsg.Login.validPassword;
-		}
+			if (!password) {
+				errors.password = TextMsg.Login.passwordUndefined;
+			} else if (!password.match(passwordPattern)) {
+				errors.password = TextMsg.Login.validPassword;
+			}
 
-		if (!confirmPassword) {
-			errors.confirmPassword = TextMsg.Login.passwordUndefined;
-		} else if (!confirmPassword.match(passwordPattern)) {
-			errors.confirmPassword = TextMsg.Login.validPassword;
-		}
+			if (!confirmPassword) {
+				errors.confirmPassword = TextMsg.Login.passwordUndefined;
+			} else if (!confirmPassword.match(passwordPattern)) {
+				errors.confirmPassword = TextMsg.Login.validPassword;
+			}
 
-		if (password !== confirmPassword) {
-			errors.confirmPassword = TextMsg.SignUp.confirmPasswordField;
+			if (password !== confirmPassword) {
+				errors.confirmPassword = TextMsg.SignUp.confirmPasswordField;
+			}
 		}
-	}
 		setErrors({ ...errors });
 		if (!Object.keys(errors).length) {
 			setDisableSubmitButton(true);
@@ -136,9 +140,9 @@ export default function Signup() {
 							(response) => {
 								if (response?.data.httpCode === 200) {
 									toast.success(response.data.message, {
-										toastId: "signupSuccess"        
+										toastId: "signupSuccess",
 									});
-									navigate(routesPath.VERIFY, {state:{from:'signup'}});
+									navigate(routesPath.VERIFY, { state: { from: "signup" } });
 								}
 							},
 							(error) => {
@@ -148,7 +152,7 @@ export default function Signup() {
 									},
 								} = error;
 								toast.error(message, {
-									toastId: "signupError"        
+									toastId: "signupError",
 								});
 							}
 						);
@@ -163,16 +167,16 @@ export default function Signup() {
 					} = error;
 					setDisableSubmitButton(false);
 					toast.error(message, {
-						toastId: "signupError"        
+						toastId: "signupError",
 					});
 				}
 			);
 		}
 	};
 
-	const loginButtonHandler =()=>{
-		navigate(routesPath.LOGIN)
-	}
+	const loginButtonHandler = () => {
+		navigate(routesPath.LOGIN);
+	};
 
 	const showPhoneFieldHandler = () => {
 		setShowPhoneField(true);
@@ -193,9 +197,11 @@ export default function Signup() {
 	};
 
 	return (
-		<Container className="login-wrapper mt-4">
-			<Form>
-				<Row className="login-wrapper__label mb-4">{TextMsg.SignUp.registerForm}</Row>
+		<Container className="authForm login-wrapper">
+			<Form className="form">
+				{/* <Row className="login-wrapper__label mb-4">{TextMsg.SignUp.registerForm}</Row> */}
+				<h1>Create an Account</h1>
+				<p>Get started by filling in your details below.</p>
 				<Row>
 					<ButtonGroup className="mb-2 toggleBtn">
 						{signUpToggle.map((radio, idx) => (
@@ -233,14 +239,12 @@ export default function Signup() {
 										+91
 									</InputGroup.Text>
 								)}
-								<Form.Control 
-									type={
-										radioValue === "1"
-											? "text"
-											: "number"
-									}
+								<Form.Control
+									type={radioValue === "1" ? "text" : "number"}
 									placeholder={
-										radioValue === "1" ? TextMsg.Login.radioValueEmail : TextMsg.Login.radioValuePhone
+										radioValue === "1"
+											? TextMsg.Login.radioValueEmail
+											: TextMsg.Login.radioValuePhone
 									}
 									name="email"
 									onChange={handleInputChange}
@@ -256,47 +260,54 @@ export default function Signup() {
 					)}
 				</Row>
 				{radioValue === "1" && (
-				<>
-				<Row className="login-wrapper__passwordField">
-					<InputComponent
-						type="password"
-						label="Create Password"
-						name="password"
-						placeholder={TextMsg.SignUp.newPassword}
-						onChange={handleInputChange}
-						value={dataLogin.password}
-						error={errors.password}
-					/>
-				</Row>
-				<Row className="login-wrapper__passwordField">
-					<InputComponent
-						type={showConfirmPassword ? "text" : "password"}
-						label="Confirm Password"
-						name="confirmPassword"
-						placeholder={TextMsg.SignUp.confirmPassword}
-						onChange={handleInputChange}
-						value={dataLogin.confirmPassword}
-						error={errors.confirmPassword}
-					/>
-					<img
-						src={showConfirmPassword?Images.showEye:Images.hideEye}
-						className="login-wrapper__eyeImage"
-						onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-						alt="eyeImage"
-					/>
-				</Row>
-				</>
+					<>
+						<Row className="login-wrapper__passwordField">
+							<InputComponent
+								type="password"
+								label="Create Password"
+								name="password"
+								placeholder={TextMsg.SignUp.newPassword}
+								onChange={handleInputChange}
+								value={dataLogin.password}
+								error={errors.password}
+							/>
+						</Row>
+						<Row className="login-wrapper__passwordField">
+							<InputComponent
+								type={showConfirmPassword ? "text" : "password"}
+								label="Confirm Password"
+								name="confirmPassword"
+								placeholder={TextMsg.SignUp.confirmPassword}
+								onChange={handleInputChange}
+								value={dataLogin.confirmPassword}
+								error={errors.confirmPassword}
+							/>
+							<img
+								src={showConfirmPassword ? Images.showEye : Images.hideEye}
+								className="login-wrapper__eyeImage"
+								onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+								alt="eyeImage"
+							/>
+						</Row>
+					</>
 				)}
 
 				<Row className="mt5">
 					<ButtonComponent
-						label={radioValue === "1" ? "Signup" : "Send OTP"}
+						label={radioValue === "1" ? "Next" : "Send OTP"}
 						btnHandler={submitHandler}
 						classname={disableSubmitButton ? "disableBtn" : ""}
 					/>
 				</Row>
-				<Row className="mt5">
-					<ButtonComponent label="Login" btnHandler = {loginButtonHandler}  />
+
+				<Row className="signupLink">
+					<p>
+						Already have an account yet?{" "}
+						<ButtonComponent
+							label="Login Now"
+							btnHandler={loginButtonHandler}
+						/>
+					</p>
 				</Row>
 			</Form>
 		</Container>

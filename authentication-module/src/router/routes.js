@@ -1,9 +1,5 @@
-import Login from "../pages/login";
-import Signup from "../pages/signUp";
-import VerifyAccount from "../pages/verifyAccount";
 import Dashboard from "../pages/dashboard";
-import ForgotPassword from "../pages/forgotPassword";
-import ResetPassword from "../pages/resetPassword";
+import AuthLayout  from "../containers/authLayout";
 
 const routesPath = {
 	LOGIN: "/",
@@ -18,17 +14,20 @@ const pageRoutes = [
 	{
 		name: "Login",
 		path: routesPath.LOGIN,
-		Component: Login,
+		Component: AuthLayout,
+		pageProp: { page: 'login' },
 	},
 	{
 		name: "Signup",
 		path: routesPath.SIGNUP,
-		Component: Signup,
+		Component: AuthLayout,
+		pageProp: { page: 'signUp' },
 	},
 	{
 		name: "verifyAccount",
 		path: routesPath.VERIFY,
-		Component: VerifyAccount,
+		Component: AuthLayout,
+		pageProp: { page: 'verifyAccount' },
 	},
 	{
 		name: "Dashboard",
@@ -38,12 +37,14 @@ const pageRoutes = [
 	{
 		name: "forgotPassword",
 		path: routesPath.FORGOTPASSWORD,
-		Component: ForgotPassword,
+		Component: AuthLayout,
+		pageProp: { page: 'forgotPassword' },
 	},
 	{
 		name: "ResetPassword",
 		path: routesPath.RESETPASSWORD,
-		Component: ResetPassword,
+		Component: AuthLayout,
+		pageProp: { page: 'resetPassword' },
 	}
 ];
 

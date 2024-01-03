@@ -57,8 +57,8 @@ function ForgotPassword() {
 		navigate(routesPath.LOGIN)
 	}
 	return (
-		<Container className="login-wrapper mt-4">
-			<Form>
+		<Container className="authForm login-wrapper">
+			<Form className="form">
 				<Row className="forgotPassword-wrapper__label mb-4">
 					{TextMsg.ForgotPassword.forgotYourPassword}
 				</Row>

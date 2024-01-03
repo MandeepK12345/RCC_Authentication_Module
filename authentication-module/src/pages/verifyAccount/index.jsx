@@ -52,7 +52,6 @@ export default function VerifyAccount() {
 	};
 
 	const otpApi = (endPoint, payload, fromResendOtp) => {
-		
 		postApiCall(
 			endPoint,
 			payload,
@@ -90,20 +89,19 @@ export default function VerifyAccount() {
 		);
 	};
 
-	const getUrl =()=>{
-		switch(from){
-			case "login" :{
+	const getUrl = () => {
+		switch (from) {
+			case "login": {
 				return endPoint.verifyLoginOtp;
 			}
-			case "forgotPassword":{
+			case "forgotPassword": {
 				return endPoint.validateForgotPassword;
 			}
-			default :{
+			default: {
 				return endPoint.verifySignupOtp;
 			}
-				 
 		}
-	}
+	};
 
 	const validateOtp = () => {
 		const { code, payload } = generatePayLoad();
@@ -204,17 +202,16 @@ export default function VerifyAccount() {
 		let result = null;
 		switch (from) {
 			case "login": {
-				result = <span>mobile number {contextInfo.mobile}</span>;
+				result = <span>{contextInfo.mobile}</span>;
 				break;
 			}
 			case "forgotPassword": {
-				result = <span>email i.e {contextInfo.email}</span>;
+				result = <span>{contextInfo.email} to reset your password.</span>;
 				break;
 			}
 			default: {
 				result = (
 					<span>
-						{userInfo?.mobileNo ? "mobile number" : " email"} i.e.{" "}
 						{userInfo?.mobileNo}
 						{userInfo?.email}
 					</span>
@@ -229,7 +226,7 @@ export default function VerifyAccount() {
 		<Container className="alignCentre verifyAccount-wrapper">
 			<h1>{TextMsg.VerifyAccount.verifyAccount}</h1>
 			<p className="mt-15">
-				{TextMsg.VerifyAccount.sentOTP}
+				{TextMsg.VerifyAccount.sentOTP}&nbsp;
 				{getMessages()}
 			</p>
 
@@ -250,9 +247,10 @@ export default function VerifyAccount() {
 			</Row>
 
 			<Row className="mt-15">
-				<ButtonComponent label="VERIFY OTP" btnHandler={validateOtp} />
+				<ButtonComponent label="Verify OTP" btnHandler={validateOtp} />
 			</Row>
 			<Row className="mt-2">
+				<span>Didn’t receive the code? </span>
 				<a onClick={resendOtp} href="javascript:void(0)" class="link-primary">
 					{TextMsg.VerifyAccount.resendOTP}
 				</a>

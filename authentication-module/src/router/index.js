@@ -30,7 +30,7 @@ function RoutesWrapper() {
 	}, []);
   return (
     <Routes>
-      {pageRoutes.map((item,index) =>  <Route key={index} path={item.path} element={<item.Component />} />
+      {pageRoutes.map((item,index) =>  <Route key={index} path={item.path} element={<item.Component {...item.pageProp}/>} />
       )}
     </Routes>
   );
