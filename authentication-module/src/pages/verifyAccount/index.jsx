@@ -21,35 +21,33 @@ export default function VerifyAccount() {
 	const dispatch = useDispatch();
 	const { from, contextInfo } = location?.state || {};
 	const fromForgotPaswordScreen = from === "forgotPassword";
+	const fromLoginScreen = from === "login";
+	const { email, countryCode, mobileNo } = userInfo || {};
+	const phoneNo = mobileNo?.substr(countryCode?.length);
 
 	const generatePayLoad = () => {
 		const { otp1, otp2, otp3, otp4 } = otpData;
 		let code = undefined;
 		if (otp1 && otp2 && otp3 && otp4) code = `${otp1}${otp2}${otp3}${otp4}`;
 
-		const { email, countryCode, mobileNo } = userInfo || {};
-		const phoneNo = mobileNo?.substr(countryCode?.length);
-
 		let payload = {
 			code: parseInt(code),
 			email,
 		};
 
-		if(from==='login'){
+		if (from === "login") {
 			payload = {
-				countryCode:contextInfo.countryCode,
+				countryCode: contextInfo.countryCode,
 				phoneNo: contextInfo.mobile,
 				code: 4321 || parseInt(code), // for now hardcoded , will remove it
 			};
-		}
-		else if (phoneNo) {
+		} else if (phoneNo) {
 			payload = {
 				countryCode,
 				phoneNo: phoneNo,
 				code: 4321 || parseInt(code), // for now hardcoded , will remove it
 			};
 		}
-
 		return { payload, code };
 	};
 
@@ -59,12 +57,15 @@ export default function VerifyAccount() {
 			payload,
 			(response) => {
 				const {
-					data: { statusCode, message,data },
+					data: { statusCode, message, data },
 				} = response;
 				if (statusCode === 200) {
-					toast.success(message);
+					toast.success(message, {
+						toastId: "verifyAccountSuccess",
+					});
+					// toast.success("Sign-up Successfully");
 					if (fromResendOtp) return;
-					if(from==='login'){
+					if (from === "login") {
 						dispatch(setUser({ ...data }));
 					}
 
@@ -81,7 +82,9 @@ export default function VerifyAccount() {
 						data: { message },
 					},
 				} = error;
-				toast.error(message);
+				toast.error(message, {
+					toastId: "verifyAccountError",
+				});
 			}
 		);
 	};
@@ -97,6 +100,41 @@ export default function VerifyAccount() {
 				: payload;
 			otpApi(url, apiPayLoad);
 		}
+	};
+
+	const resendOtpLoginSignup = () => {
+		const url = endPoint.getOtp;
+		const { countryCode, mobileNo } = userInfo || {};
+		let apiPayLoad = fromLoginScreen
+			? {
+					countryCode: contextInfo.countryCode,
+					phoneNo: contextInfo.mobile,
+			  }
+			: {
+					countryCode: countryCode,
+					phoneNo: phoneNo,
+			  };
+		postApiCall(
+			url,
+			apiPayLoad,
+			(response) => {
+				if (response?.data?.httpCode === 200) {
+					toast.success(response.data.message, {
+						toastId: "resendOtpSuccess",
+					});
+				}
+			},
+			(error) => {
+				const {
+					response: {
+						data: { message },
+					},
+				} = error;
+				toast.error(message, {
+					toastId: "resendOtpError",
+				});
+			}
+		);
 	};
 
 	const handleOnChange = (e, name) => {
@@ -115,7 +153,6 @@ export default function VerifyAccount() {
 		if (currentIndex < inputFields.length - 1) {
 			const nextField = inputFields[currentIndex + 1];
 			const nextValue = document.getElementById(nextField)?.value;
-
 			if (nextValue) {
 				delete otpData[nextField];
 			}
@@ -143,7 +180,11 @@ export default function VerifyAccount() {
 	};
 
 	const resendOtp = () => {
-		otpApi(endPoint.resendOtp, { email: contextInfo.email }, true);
+		if (fromForgotPaswordScreen) {
+			otpApi(endPoint.resendOtp, { email: contextInfo.email }, true);
+		} else {
+			resendOtpLoginSignup();
+		}
 	};
 
 	const getMessages = () => {
@@ -158,11 +199,13 @@ export default function VerifyAccount() {
 				break;
 			}
 			default: {
-				result = <span>
-					{userInfo?.mobileNo ? "mobile number" : " email"} i.e.{" "}
-					{userInfo?.mobileNo}
-					{userInfo?.email}
-				</span>;
+				result = (
+					<span>
+						{userInfo?.mobileNo ? "mobile number" : " email"} i.e.{" "}
+						{userInfo?.mobileNo}
+						{userInfo?.email}
+					</span>
+				);
 				break;
 			}
 		}
@@ -196,13 +239,11 @@ export default function VerifyAccount() {
 			<Row className="mt-15">
 				<ButtonComponent label="VERIFY OTP" btnHandler={validateOtp} />
 			</Row>
-			{fromForgotPaswordScreen && (
-				<Row className="mt-2">
-					<a onClick={resendOtp} href="javascript:void(0)" class="link-primary">
-						{TextMsg.VerifyAccount.resendOTP}
-					</a>
-				</Row>
-			)}
+			<Row className="mt-2">
+				<a onClick={resendOtp} href="javascript:void(0)" class="link-primary">
+					{TextMsg.VerifyAccount.resendOTP}
+				</a>
+			</Row>
 		</Container>
 	);
 }

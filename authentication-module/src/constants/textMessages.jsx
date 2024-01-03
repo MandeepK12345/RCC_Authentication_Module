@@ -2,33 +2,33 @@ const TextMsg = {
 	Login: {
 		validMobile: "Please enter a valid mobile number",
 		validEmail: "Please enter a valid email address",
-		validPassword: "Please enter a valid password",
+		validPassword: "Password must be 8 characters long, an uppercase letter, a lowercase letter, a number, and a special character",
 		passwordUndefined: "Password is not defined",
 		emailRequired : "Email is required",
 		phoneRequired : "Phone is required",
 		loginToggleEmail : "Login with email",
 		loginTogglePhone : "Login with phone",
-		radioValueEmail : "Enter your Email",
-		radioValuePhone : "Enter your Phone",
-		loginPassword : "Enter your Password",
+		radioValueEmail : "Please Enter Your Email Address",
+		radioValuePhone : "Please Enter Your Phone Number",
+		loginPassword : "Please Enter Your Password",
 		loginForm : "Login Form",
-		dontHaveAccount : "Don't have account yet ?",
+		dontHaveAccount : "Don't have account yet?    ",
 	},
 	ForgotPassword: {
 		validEmail: "Please enter a valid email address",
 		emailRequired : "Email is required",
-		email : "Enter your Email",
-		forgotYourPassword: "Forgot your password ?",
-		forgotPassword : "ForgotPassword"
+		email : "Please Enter your Email Address",
+		forgotYourPassword: "Forgot your password?    ",
+		forgotPassword : " ForgotPassword"
 	},
 	SignUp :{
 		signUpToggleEmail :"SignUp with email",
 		signUpTogglePhone : "SignUp with phone",
-		confirmPasswordField : "confirm password should be same",
-		newPassword : "Enter your new Password",
-		confirmPassword : "Confirm your new Password",
+		confirmPasswordField : "Password doesn't match with confirm password",
+		newPassword : "Please Enter Your Password",
+		confirmPassword : "Confirm Your Password",
 		registerForm : "Register Form",
-		signUp : "Signup"
+		signUp : "   Signup"
 	},
 	VerifyAccount :{
 		verifyAccount : "Verify your Account",

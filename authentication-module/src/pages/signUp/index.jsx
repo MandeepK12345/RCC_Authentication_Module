@@ -28,26 +28,30 @@ const signUpToggle = [
 ];
 
 export default function Signup() {
-	const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-	const [dataLogin, setDataLogin] = React.useState({
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [dataLogin, setDataLogin] = useState({
 		email: "",
 		password: "",
 		confirmPassword: "",
 	});
 	const [radioValue, setRadioValue] = useState("1");
-	const [errors, setErrors] = React.useState({});
-	const [disableSubmitButton, setDisableSubmitButton] = React.useState(false);
-	const [showPhoneField, setShowPhoneField] = React.useState(false);
-	const [phoneDropDown, setPhoneDropDown] = React.useState("");
+	const [errors, setErrors] = useState({});
+	const [disableSubmitButton, setDisableSubmitButton] = useState(true);
+	const [showPhoneField, setShowPhoneField] = useState(false);
+	const [phoneDropDown, setPhoneDropDown] = useState("");
 	const [countryCode, setCountryCode] = useState("+91");
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	const handleInputChange = (e) => {
 		const { value, name } = e?.target;
-		setDataLogin({ ...dataLogin, [name]: value });
+		setDataLogin(()=>({ ...dataLogin, [name]: value?.replace(/ /g, "") }));
 		setErrors({});
 	};
+
+	useEffect(()=>{
+		setDisableSubmitButton((dataLogin?.email?.length && dataLogin?.password?.length && dataLogin?.confirmPassword?.length) ? false : true);
+	},[dataLogin.email, dataLogin.password, dataLogin.confirmPassword]);
 
 	const submitHandler = (event) => {
 		event.preventDefault();
@@ -82,6 +86,7 @@ export default function Signup() {
 	}
 		setErrors({ ...errors });
 		if (!Object.keys(errors).length) {
+			setDisableSubmitButton(true);
 			//login api call
 			let payload = {
 				email,
@@ -108,7 +113,6 @@ export default function Signup() {
 						} = response?.data;
 
 						let payloadGenerateOtp = { email };
-						toast.success(message);
 						dispatch(setUser({ ...response?.data?.data }));
 
 						if (radioValue === "2") {
@@ -125,8 +129,10 @@ export default function Signup() {
 							payloadGenerateOtp,
 							(response) => {
 								if (response?.data.httpCode === 200) {
-									toast.success(response.data.message);
-									navigate(routesPath.VERIFY);
+									toast.success(response.data.message, {
+										toastId: "signupSuccess"        
+									});
+									navigate(routesPath.VERIFY, {state:{from:'signup'}});
 								}
 							},
 							(error) => {
@@ -135,10 +141,13 @@ export default function Signup() {
 										data: { message },
 									},
 								} = error;
-								toast.error(message);
+								toast.error(message, {
+									toastId: "signupError"        
+								});
 							}
 						);
 					}
+					setDisableSubmitButton(false);
 				},
 				(error) => {
 					const {
@@ -146,17 +155,18 @@ export default function Signup() {
 							data: { message },
 						},
 					} = error;
-					toast.error(message);
+					setDisableSubmitButton(false);
+					toast.error(message, {
+						toastId: "signupError"        
+					});
 				}
 			);
 		}
 	};
 
-	useEffect(() => {
-		if (!Object.keys(errors).length) {
-			setDisableSubmitButton(true);
-		}
-	}, [errors]);
+	const loginButtonHandler =()=>{
+		navigate(routesPath.LOGIN)
+	}
 
 	const showPhoneFieldHandler = () => {
 		setShowPhoneField(true);
@@ -217,8 +227,12 @@ export default function Signup() {
 										+91
 									</InputGroup.Text>
 								)}
-								<Form.Control
-									type="text"
+								<Form.Control 
+									type={
+										radioValue === "1"
+											? "text"
+											: "number"
+									}
 									placeholder={
 										radioValue === "1" ? TextMsg.Login.radioValueEmail : TextMsg.Login.radioValuePhone
 									}
@@ -259,7 +273,7 @@ export default function Signup() {
 						error={errors.confirmPassword}
 					/>
 					<img
-						src={Images.VisibilityIcon}
+						src={showConfirmPassword?Images.showEye:Images.hideEye}
 						className="login-wrapper__eyeImage"
 						onClick={() => setShowConfirmPassword(!showConfirmPassword)}
 						alt="eyeImage"
@@ -270,10 +284,13 @@ export default function Signup() {
 
 				<Row className="mt5">
 					<ButtonComponent
-						label="Signup"
+						label={radioValue === "1" ? "Signup" : "Send OTP"}
 						btnHandler={submitHandler}
-						disable={disableSubmitButton}
+						classname={disableSubmitButton ? "disableBtn" : ""}
 					/>
+				</Row>
+				<Row className="mt5">
+					<ButtonComponent label="Login" btnHandler = {loginButtonHandler}  />
 				</Row>
 			</Form>
 		</Container>

@@ -1,12 +1,12 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
+import './index.css'
 
 export default function ButtonComponent({
 	btnHandler,
 	label,
 	variant = "primary",
 	classname,
-	disable = false,
 	size = "lg",
 }) {
 	return (
@@ -15,7 +15,6 @@ export default function ButtonComponent({
 			type="submit"
 			onClick={btnHandler}
 			className={classname}
-			disable={disable}
 			size={size}
 		>
 			{label}

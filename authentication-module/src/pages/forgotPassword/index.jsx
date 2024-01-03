@@ -18,11 +18,6 @@ function ForgotPassword() {
 	const [errors, setErrors] = React.useState({});
 	const navigate = useNavigate();
 
-	const handleInputChange = (e) => {
-		const { value } = e?.target;
-		setEmail(value);
-		setErrors({});
-	};
 	const submitHandler = (event) => {
 		event.preventDefault();
 		const errors = {};
@@ -38,8 +33,10 @@ function ForgotPassword() {
 				{ email },
 				(response) => {
 					if (response?.data.httpCode === 200) {
-						toast.success(response.data.message);
-						navigate(routesPath.VERIFY, {state:{from:'forgotPassword',contextInfo:{email:email}}});
+						toast.success(response.data.message, {
+							toastId: "forgotPasswordSuccess",
+						});
+						navigate(routesPath.VERIFY, {state:{from:'forgotPassword',contextInfo:{email:email}}, replace : true});
 					}
 				},
 				(error) => {
@@ -48,12 +45,17 @@ function ForgotPassword() {
 							data: { message },
 						},
 					} = error;
-					toast.error(message);
+					toast.error(message, {
+						toastId: "forgotPasswordError"
+					});
 				}
 			);
 		}
 	};
 
+	const backButtonSubmitHandler =()=>{
+		navigate(routesPath.LOGIN)
+	}
 	return (
 		<Container className="login-wrapper mt-4">
 			<Form>
@@ -66,13 +68,18 @@ function ForgotPassword() {
 						label="Email"
 						placeholder={TextMsg.ForgotPassword.email}
 						name="email"
-						onChange={handleInputChange}
+						onChange={(e)=>{setEmail(e.target.value);
+						setErrors({})
+						}}
 						value={email}
 						error={errors.email}
 					/>
 				</Row>
 				<Row className="mt5">
 					<ButtonComponent label="Send OTP" btnHandler={submitHandler} />
+				</Row>
+				<Row className="mt5">
+					<ButtonComponent label="Back" btnHandler = {backButtonSubmitHandler}  />
 				</Row>
 			</Form>
 		</Container>

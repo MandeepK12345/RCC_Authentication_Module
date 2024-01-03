@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import InputComponent from "../../components/input";
 import ButtonComponent from "../../components/button";
 import TextMsg from "../../constants/textMessages";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import {putApiCall} from "../../api/methods";
 import endPoint from "../../api/endPoint";
 import { routesPath } from "../../router/routes";
@@ -16,14 +16,15 @@ import {
 import Images from "../../utils/images";
 import "./index.css";
 
-function ResetPassword() {
-	
+function ResetPassword() {	
 	const[resetPasswordData, setResetPasswordData]=useState({});
 	const [errors, setErrors] = React.useState({});
 	const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 	const [showPassword, setShowPassword] = React.useState(false);
+
 	const navigate = useNavigate();
 	const location= useLocation();
+
 
 	const handleInputChange = (e) => {
 		const { name,value} = e?.target;
@@ -64,7 +65,9 @@ function ResetPassword() {
 	        payloadGenerateOtp,
 	        (response) => {
 	            if (response?.data.httpCode === 200) {
-	                toast.success(response.data.message);
+	                toast.success(response.data.message, {
+						toastId: "resetPasswordSuccess"        
+					});
 	                navigate(routesPath.LOGIN);
 	            }
 	        },
@@ -74,7 +77,9 @@ function ResetPassword() {
 	                    data: { message },
 	                },
 	            } = error;
-	            toast.error(message);
+	            toast.error(message, {
+					toastId: "resetError"        
+				});
 	        }
 	    );
 
@@ -86,7 +91,7 @@ function ResetPassword() {
 				<Row className="login-wrapper__passwordField">
 					<InputComponent
 						type={showPassword ? "text" : "password"}
-						label="Create Password"
+						label="New Password"
 						name="password"
 						placeholder={TextMsg.SignUp.newPassword}
 						onChange={handleInputChange}
@@ -94,7 +99,7 @@ function ResetPassword() {
 						error={errors.password}
 					/>
 					<img
-						src={Images.VisibilityIcon}
+						src={showPassword?Images.showEye:Images.hideEye}
 						className="login-wrapper__eyeImage"
 						onClick={() => setShowPassword(!showPassword)}
 						alt="eyeImage"
@@ -111,7 +116,7 @@ function ResetPassword() {
 						error={errors.confirmPassword}
 					/>
 					<img
-						src={Images.VisibilityIcon}
+						src={showConfirmPassword?Images.showEye:Images.hideEye}
 						className="login-wrapper__eyeImage"
 						onClick={() => setShowConfirmPassword(!showConfirmPassword)}
 						alt="eyeImage"

@@ -6,9 +6,10 @@
 	right: 10px;
 	position: absolute;
 	width: 40px ;
-	top: 35px;
-}
+	top: 30px;
+	cursor : pointer
 
+}
 .login-wrapper__label{	
     display: flex;
 	justify-content: center;
@@ -42,5 +43,9 @@
 	.form-control{
 		width: 100%;
 	}
+}
+
+.mt-2{
+	gap : 0.5rem;
 }
 

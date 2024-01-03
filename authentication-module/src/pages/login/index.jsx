@@ -34,10 +34,10 @@ export default function Login() {
 		password: "",
 	});
 	const [radioValue, setRadioValue] = useState("1");
-	const [errors, setErrors] = React.useState({});
-	const [disableSubmitButton, setDisableSubmitButton] = React.useState(false);
-	const [showPhoneField, setShowPhoneField] = React.useState(false);
-	const [phoneDropDown, setPhoneDropDown] = React.useState("");
+	const [errors, setErrors] = useState({});
+	const [disableSubmitButton, setDisableSubmitButton] = useState(true);
+	const [showPhoneField, setShowPhoneField] = useState(false);
+	const [phoneDropDown, setPhoneDropDown] = useState("");
 	const [countryCode, setCountryCode] = useState("+91");
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -46,9 +46,23 @@ export default function Login() {
 
 	const handleInputChange = (e) => {
 		const { value, name } = e?.target;
-		setDataLogin({ ...dataLogin, [name]: value });
-		setErrors({});
+		const errors = {};
+		if (name === "email" && radioValue === "2") {	
+				if (value.length < 7) {
+					errors.email = "Phone number field should contain minimum 7 digits";
+
+				} else if (value.length > 15) {
+					errors.email = "Phone number field should contain maximum 15 digits";
+				}
+				setErrors({ ...errors });	
+		}
+		
+		setDataLogin(() => ({ ...dataLogin, [name]: value?.replace(/ /g, "") }));		
 	};
+
+	useEffect(()=>{
+		setDisableSubmitButton((dataLogin?.email?.length && dataLogin?.password?.length) ? false : true);
+	},[dataLogin.email, dataLogin.password]);
 
 	// Login handler
 	const submitHandler = (event) => {
@@ -74,6 +88,7 @@ export default function Login() {
 		}
 		setErrors({ ...errors });
 		if (!Object.keys(errors).length) {
+			setDisableSubmitButton(true);
 			//login api call
 			let payload = {
 				email,
@@ -92,17 +107,27 @@ export default function Login() {
 				(response) => {
 					if (response.status === 200) {
 						if (radioValue === "2") {
-							toast.success(response.data.message);
-							navigate(routesPath.VERIFY,{state:{from:'login',contextInfo:{mobile:email,countryCode:countryCode}}});
+							toast.success(response.data.message, {
+								toastId: "loginSuccess",
+							});
+							navigate(routesPath.VERIFY, {
+								state: {
+									from: "login",
+									contextInfo: { mobile: email, countryCode: countryCode },
+								},
+							});
 						} else {
 							const { email } = response?.data.data;
-							toast.success(`${email} successfully loggedin.`);
+							toast.success(`login successfully`, {
+								toastId: "loginSuccess",
+							});
 							// dispatching an action to set userData in store
 							dispatch(setUser({ ...response?.data?.data }));
 							// on successful login navigting to dashboard
 							navigate(routesPath.DASHBOARD);
 						}
 					}
+					setDisableSubmitButton(false);
 				},
 				(error) => {
 					const {
@@ -110,17 +135,14 @@ export default function Login() {
 							data: { message },
 						},
 					} = error;
-					toast.error(message);
+					setDisableSubmitButton(false);
+					toast.error(message, {
+						toastId: "loginError",
+					});
 				}
 			);
 		}
 	};
-
-	useEffect(() => {
-		if (!Object.keys(errors).length) {
-			setDisableSubmitButton(true);
-		}
-	}, [errors]);
 
 	const showPhoneFieldHandler = () => {
 		setShowPhoneField(true);
@@ -185,7 +207,7 @@ export default function Login() {
 									</InputGroup.Text>
 								)}
 								<Form.Control
-									type="text"
+									type={radioValue === "1" ? "text" : "number"}
 									placeholder={
 										radioValue === "1"
 											? TextMsg.Login.radioValueEmail
@@ -216,22 +238,21 @@ export default function Login() {
 							error={errors.password}
 						/>
 						<img
-							src={Images.VisibilityIcon}
-							className="login-wrapper__eyeImage"
+							src={showPassword?Images.showEye:Images.hideEye}
+							// className="login-wrapper__eyeImage"
+							className='login-wrapper__eyeImage'
 							onClick={() => setShowPassword(!showPassword)}
 							alt="eyeImage"
 						/>
 					</Row>
 				)}
-
 				<Row className="mt5">
 					<ButtonComponent
-						label={radioValue === "1" ? "Submit" : "Send OTP"}
+						label={radioValue === "1" ? "Login" : "Send OTP"}
 						btnHandler={submitHandler}
-						disable={disableSubmitButton}
+						classname={disableSubmitButton ? "disableBtn" : ""}
 					/>
 				</Row>
-
 				<Row className="mt-2">
 					<span>{TextMsg.Login.dontHaveAccount}</span>
 					<a

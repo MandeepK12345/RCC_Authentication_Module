@@ -1,5 +1,5 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
+import {Form} from "react-bootstrap";
 import "./index.css";
 
 export default function InputComponent({
@@ -24,7 +24,7 @@ export default function InputComponent({
 				name={name}
 				onClick={onClick}
 				onChange={onChange}
-				defaultValue={value}
+				value={value?.replace(/ /g, "")}
 				disabled={disabled}
 				className={className}
 			/>

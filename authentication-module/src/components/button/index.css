@@ -1,0 +1,5 @@
+.disableBtn{
+    pointer-events: none !important;
+    opacity: 0.3;
+
+}
