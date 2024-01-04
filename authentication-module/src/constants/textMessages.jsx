@@ -12,7 +12,8 @@ const TextMsg = {
 		radioValuePhone : "Please Enter Your Phone Number",
 		loginPassword : "Please Enter Your Password",
 		loginForm : "Login Page",
-		dontHaveAccount : "Don't have account yet?    ",
+		dontHaveAccount : "Don't have account yet?",
+		login : "Login"
 	},
 	ForgotPassword: {
 		validEmail: "Please enter a valid email address",

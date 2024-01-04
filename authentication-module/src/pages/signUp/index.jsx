@@ -299,15 +299,15 @@ export default function Signup() {
 						classname={disableSubmitButton ? "disableBtn" : ""}
 					/>
 				</Row>
-
-				<Row className="signupLink">
-					<p>
-						Already have an account yet?{" "}
-						<ButtonComponent
-							label="Login Now"
-							btnHandler={loginButtonHandler}
-						/>
-					</p>
+				<Row className="mt-2">
+					<span>Already have an account ?{" "}</span>
+					<a
+						onClick={() => navigate(routesPath.LOGIN)}
+						href="javascript:void(0)"
+						class="link-primary"
+					>
+						{TextMsg.Login.login}
+					</a>
 				</Row>
 			</Form>
 		</Container>
