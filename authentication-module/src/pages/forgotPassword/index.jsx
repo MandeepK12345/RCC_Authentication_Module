@@ -77,7 +77,7 @@ function ForgotPassword() {
 						placeholder={TextMsg.ForgotPassword.email}
 						name="email"
 						onChange={(e) => {
-							setEmail(e.target.value);
+							setEmail(e.target.value?.replace(/ /g, ""));
 							setErrors({});
 						}}
 						value={email}
