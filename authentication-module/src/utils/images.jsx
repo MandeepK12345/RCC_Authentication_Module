@@ -5,6 +5,10 @@ import showEye from "../assets/images/showEye.png";
 import hideEye from "../assets/images/hideEye.png";
 import logo from "../assets/images/logo.svg";
 import slider from "../assets/images/slider.webp";
+import facebook from "../assets/images/facebook.png";
+import linkedin from "../assets/images/linkedin.png";
+import googleIcon from "../assets/images/search.png";
+import appleIcon from "../assets/images/apple.png";
 
 
 const Images = {
@@ -14,7 +18,11 @@ const Images = {
     showEye,
     hideEye,
     logo,
-    slider
+    slider,
+    facebook,
+    linkedin,
+    googleIcon,
+    appleIcon
 }
 
 export default Images;

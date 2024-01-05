@@ -1,6 +1,9 @@
-.user-dashboard{
-    display: flex;
+.user-dashboard {
+	display: flex;
+	width: 100%;
 	justify-content: center;
-    font-weight: 600;
-    font-size: 30px;
+	font-weight: 600;
+	font-size: 30px;
+	margin-top: 20px;
 }
+

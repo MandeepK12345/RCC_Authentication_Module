@@ -5,50 +5,51 @@
 .login-wrapper__eyeImage {
 	right: 10px;
 	position: absolute;
-	width: 40px ;
-	top: 30px;
-	cursor : pointer
-
+	width: 30px;
+	top: 36px;
+	cursor: pointer;
 }
-.login-wrapper__label{	
-    display: flex;
+.login-wrapper__label {
+	display: flex;
 	justify-content: center;
-    font-weight: 600;
-    font-size: 30px;
+	font-weight: 600;
+	font-size: 30px;
 }
-.mb-3{
+.mb-3 {
 	display: flex;
 	justify-content: space-between;
 }
 
-.mt5{
+.mt5 {
 	margin-top: 5px;
 }
 
-
-.countryCode{
+.countryCode {
 	position: absolute;
 }
 
-.toggleBtn{
-	.btn-check{
+.toggleBtn {
+	.btn-check {
 		display: none;
 	}
 }
-.toggle-active{
-	background:#007bff !important;
+.toggle-active {
+	background: #007bff !important;
 }
 
-.phoneInput{
-	.form-control{
+.phoneInput {
+	.form-control {
 		width: 100%;
 	}
 }
 
-.mt-2{
-	gap : 0.5rem;
+.mt-2 {
+	gap: 0.5rem;
 }
 
-.mb-2{
-    width:100%
+.mb-2 {
+	width: 100%;
+}
+.forgot-password{
+	justify-content: flex-end;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
@@ -7,7 +7,7 @@ import { emailPattern } from "../../utils/common";
 import TextMsg from "../../constants/textMessages";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import {postApiCall} from "../../api/methods";
+import { postApiCall } from "../../api/methods";
 import endPoint from "../../api/endPoint";
 import { routesPath } from "../../router/routes";
 import InputComponent from "../../components/input";
@@ -15,8 +15,11 @@ import "./index.css";
 
 function ForgotPassword() {
 	const [email, setEmail] = useState("");
-	const [errors, setErrors] = React.useState({});
+	const [errors, setErrors] = useState({});
+	const [disableSubmitButton, setDisableSubmitButton] = useState(true);
 	const navigate = useNavigate();
+
+	useEffect(() => setDisableSubmitButton(!email.length), [email]);
 
 	const submitHandler = (event) => {
 		event.preventDefault();
@@ -28,6 +31,7 @@ function ForgotPassword() {
 		}
 		setErrors({ ...errors });
 		if (!Object.keys(errors).length) {
+			setDisableSubmitButton(true);
 			postApiCall(
 				endPoint.forgotPassword,
 				{ email },
@@ -36,8 +40,12 @@ function ForgotPassword() {
 						toast.success(response.data.message, {
 							toastId: "forgotPasswordSuccess",
 						});
-						navigate(routesPath.VERIFY, {state:{from:'forgotPassword',contextInfo:{email:email}}, replace : true});
+						navigate(routesPath.VERIFY, {
+							state: { from: "forgotPassword", contextInfo: { email: email } },
+							replace: true,
+						});
 					}
+					setDisableSubmitButton(false);
 				},
 				(error) => {
 					const {
@@ -45,41 +53,46 @@ function ForgotPassword() {
 							data: { message },
 						},
 					} = error;
+					setDisableSubmitButton(false);
 					toast.error(message, {
-						toastId: "forgotPasswordError"
+						toastId: "forgotPasswordError",
 					});
 				}
 			);
 		}
 	};
 
-	const backButtonSubmitHandler =()=>{
-		navigate(routesPath.LOGIN)
-	}
+	const backButtonSubmitHandler = () => {
+		navigate(routesPath.LOGIN);
+	};
 	return (
 		<Container className="authForm login-wrapper">
+			<h1>{TextMsg.ForgotPassword.forgotYourPassword}</h1>
 			<Form className="form">
-				<Row className="forgotPassword-wrapper__label mb-4">
-					{TextMsg.ForgotPassword.forgotYourPassword}
-				</Row>
+				<Row className="forgotPassword-wrapper__label mb-4"></Row>
 				<Row>
 					<InputComponent
 						type="text"
 						label="Email"
 						placeholder={TextMsg.ForgotPassword.email}
 						name="email"
-						onChange={(e)=>{setEmail(e.target.value);
-						setErrors({})
+						onChange={(e) => {
+							setEmail(e.target.value);
+							setErrors({});
 						}}
 						value={email}
 						error={errors.email}
 					/>
 				</Row>
 				<Row className="mt5">
-					<ButtonComponent label="Send OTP" btnHandler={submitHandler} />
+					<ButtonComponent
+						label="Send OTP"
+						btnHandler={submitHandler}
+						disabled={disableSubmitButton}
+					/>
 				</Row>
 				<Row className="mt5">
-					<ButtonComponent label="Back" btnHandler = {backButtonSubmitHandler}  />
+					<ButtonComponent label="Back" btnHandler={backButtonSubmitHandler} />
 				</Row>
 			</Form>
 		</Container>

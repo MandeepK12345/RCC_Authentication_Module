@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
@@ -16,9 +16,10 @@ import "./index.css";
 
 function ResetPassword() {
 	const [resetPasswordData, setResetPasswordData] = useState({});
-	const [errors, setErrors] = React.useState({});
-	const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-	const [showPassword, setShowPassword] = React.useState(false);
+	const [errors, setErrors] = useState({});
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
+	const [disableSubmitButton, setDisableSubmitButton] = useState(true);
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -28,6 +29,17 @@ function ResetPassword() {
 		setResetPasswordData({ ...resetPasswordData, [name]: value });
 		setErrors({});
 	};
+
+	useEffect(
+		() =>
+			setDisableSubmitButton(
+				!(
+					resetPasswordData?.password?.length &&
+					resetPasswordData?.confirmPassword?.length
+				)
+			),
+		[resetPasswordData]
+	);
 
 	const submitHandler = (event) => {
 		event.preventDefault();
@@ -51,33 +63,39 @@ function ResetPassword() {
 		}
 
 		setErrors({ ...errors });
-		const payloadGenerateOtp = {
-			email: resetEmail,
-			newPassword: password,
-			confirmPassword: confirmPassword,
-		};
-		putApiCall(
-			endPoint.resetPassword,
-			payloadGenerateOtp,
-			(response) => {
-				if (response?.data.httpCode === 200) {
-					toast.success(response.data.message, {
-						toastId: "resetPasswordSuccess",
-					});
-					navigate(routesPath.LOGIN);
+		if (!Object.keys(errors).length) {
+			setDisableSubmitButton(true);
+
+			const payloadGenerateOtp = {
+				email: resetEmail,
+				newPassword: password,
+				confirmPassword: confirmPassword,
+			};
+			putApiCall(
+				endPoint.resetPassword,
+				payloadGenerateOtp,
+				(response) => {
+					if (response?.data.httpCode === 200) {
+						toast.success(response.data.message, {
+							toastId: "resetPasswordSuccess",
+						});
+						navigate(routesPath.LOGIN);
+						setDisableSubmitButton(false);
+					}
+				},
+				(error) => {
+					const {
+						response: {
+							data: { message },
+						},
+					} = error;
+					setDisableSubmitButton(false);
+					// toast.error(message, {
+					// 	toastId: "resetError",
+					// });
 				}
-			},
-			(error) => {
-				const {
-					response: {
-						data: { message },
-					},
-				} = error;
-				toast.error(message, {
-					toastId: "resetError",
-				});
-			}
-		);
+			);
+		}
 	};
 
 	return (
@@ -124,7 +142,14 @@ function ResetPassword() {
 					<ButtonComponent
 						label="Submit"
 						btnHandler={submitHandler}
-						// disable={disableSubmitButton}
+						disabled={disableSubmitButton}
+					/>
+					<ButtonComponent
+						label="Back"
+						classname="mt-4"
+						btnHandler={() => {
+							navigate(routesPath.LOGIN);
+						}}
 					/>
 				</Row>
 			</Form>

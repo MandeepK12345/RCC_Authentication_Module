@@ -20,15 +20,19 @@ import {
 	passwordPattern,
 	phonePattern,
 } from "../../utils/common";
+import SocialIcons from "../../components/socialIcons";
 import "./index.css";
 
+//handled email and Phone number tab
 const signUpToggle = [
 	{ name: TextMsg.SignUp.signUpToggleEmail, value: "1" },
 	{ name: TextMsg.SignUp.signUpTogglePhone, value: "2" },
 ];
 
+//signup component
 export default function Signup() {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 	const [dataLogin, setDataLogin] = useState({
 		email: "",
 		password: "",
@@ -45,7 +49,11 @@ export default function Signup() {
 
 	const handleInputChange = (e) => {
 		const { value, name } = e?.target;
-		setDataLogin(() => ({ ...dataLogin, [name]: value?.replace(/ /g, "") }));
+		if (name === "email") {
+			setDataLogin({ ...dataLogin, [name]: value?.replace(/ /g, "") });
+		} else if (name === "password" || name === "confirmPassword") {
+			setDataLogin({ ...dataLogin, [name]: value });
+		}
 		setErrors({});
 	};
 
@@ -63,6 +71,7 @@ export default function Signup() {
 		}
 	}, [dataLogin.email, dataLogin.password, dataLogin.confirmPassword]);
 
+	//SignUp handler
 	const submitHandler = (event) => {
 		event.preventDefault();
 		const { email, password, confirmPassword } = dataLogin;
@@ -183,11 +192,13 @@ export default function Signup() {
 		setPhoneDropDown(dataLogin.email);
 	};
 
+	// multiple country code dropDown Handler
 	const inbuiltPhoneHandler = (_value, data) => {
 		setDataLogin({ ...dataLogin, email: _value });
 		setCountryCode("+" + data.dialCode);
 	};
 
+	//handled phone and email fields of tab
 	const toggleHandler = (value) => {
 		setShowPhoneField(false);
 		setErrors({});
@@ -198,19 +209,18 @@ export default function Signup() {
 
 	return (
 		<Container className="authForm login-wrapper">
+			<h1>{TextMsg.SignUp.heading}</h1>
+				<p>{TextMsg.SignUp.subHeading}</p>
 			<Form className="form">
-				{/* <Row className="login-wrapper__label mb-4">{TextMsg.SignUp.registerForm}</Row> */}
-				<h1>Create an Account</h1>
-				<p>Get started by filling in your details below.</p>
 				<Row>
 					<ButtonGroup className="mb-2 toggleBtn">
 						{signUpToggle.map((radio, idx) => (
 							<ToggleButton
 								key={idx}
 								id={`radio-${idx}`}
-								type="radio"
+								type={TextMsg.SignUp.radio}
 								variant="secondary"
-								name="radio"
+								name={TextMsg.SignUp.radio}
 								value={radio.value}
 								checked={radioValue === radio.value}
 								onChange={(e) => toggleHandler(e.target.value)}
@@ -240,13 +250,13 @@ export default function Signup() {
 									</InputGroup.Text>
 								)}
 								<Form.Control
-									type={radioValue === "1" ? "text" : "number"}
+									type={radioValue === "1" ? TextMsg.SignUp.radioValueText : TextMsg.SignUp.radioValueNumber }
 									placeholder={
 										radioValue === "1"
 											? TextMsg.Login.radioValueEmail
 											: TextMsg.Login.radioValuePhone
 									}
-									name="email"
+									name={TextMsg.SignUp.email}
 									onChange={handleInputChange}
 									value={dataLogin.email}
 								/>
@@ -263,20 +273,26 @@ export default function Signup() {
 					<>
 						<Row className="login-wrapper__passwordField">
 							<InputComponent
-								type="password"
-								label="Create Password"
-								name="password"
+								type={showPassword ? TextMsg.SignUp.radioValueText : TextMsg.SignUp.radioValuePassword }
+								label= {TextMsg.SignUp.createPassword}
+								name={TextMsg.SignUp.password}
 								placeholder={TextMsg.SignUp.newPassword}
 								onChange={handleInputChange}
 								value={dataLogin.password}
 								error={errors.password}
 							/>
+							<img
+								src={showPassword ? Images.showEye : Images.hideEye}
+								className="login-wrapper__eyeImage"
+								onClick={() => setShowPassword(!showPassword)}
+								alt= {TextMsg.SignUp.eyeImage}
+							/>
 						</Row>
 						<Row className="login-wrapper__passwordField">
 							<InputComponent
-								type={showConfirmPassword ? "text" : "password"}
-								label="Confirm Password"
-								name="confirmPassword"
+								type={showConfirmPassword ? TextMsg.SignUp.radioValueText : TextMsg.SignUp.radioValuePassword }
+								label= {TextMsg.SignUp.labelConfirmPassword}
+								name={TextMsg.SignUp.nameConfirmPassword}
 								placeholder={TextMsg.SignUp.confirmPassword}
 								onChange={handleInputChange}
 								value={dataLogin.confirmPassword}
@@ -286,7 +302,7 @@ export default function Signup() {
 								src={showConfirmPassword ? Images.showEye : Images.hideEye}
 								className="login-wrapper__eyeImage"
 								onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-								alt="eyeImage"
+								alt= {TextMsg.SignUp.eyeImage}
 							/>
 						</Row>
 					</>
@@ -294,13 +310,13 @@ export default function Signup() {
 
 				<Row className="mt5">
 					<ButtonComponent
-						label={radioValue === "1" ? "Next" : "Send OTP"}
+						label={radioValue === "1" ? TextMsg.SignUp.next : TextMsg.SignUp.sendOtp }
 						btnHandler={submitHandler}
-						classname={disableSubmitButton ? "disableBtn" : ""}
+						disabled={disableSubmitButton}
 					/>
 				</Row>
 				<Row className="mt-2">
-					<span>Already have an account ?{" "}</span>
+					<span>{TextMsg.SignUp.alreadyHaveAccount}{" "}</span>
 					<a
 						onClick={() => navigate(routesPath.LOGIN)}
 						href="javascript:void(0)"
@@ -309,6 +325,7 @@ export default function Signup() {
 						{TextMsg.Login.login}
 					</a>
 				</Row>
+				<SocialIcons/>
 			</Form>
 		</Container>
 	);

@@ -1,0 +1,29 @@
+.avatar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+    margin-right: 150px;
+}
+
+.custom_popover{
+    max-width: 230px;
+}
+.custom_popover__email{
+	font-weight: 500;
+}
+.custom_popover__header{
+	font-weight: 600;
+	text-align: center;
+}
+
+.avatar-icon {
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px;
+}
+.pointer-cursor {
+	cursor: pointer;
+}
+

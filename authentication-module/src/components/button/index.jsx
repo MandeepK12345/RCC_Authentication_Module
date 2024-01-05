@@ -8,14 +8,16 @@ export default function ButtonComponent({
 	variant = "primary",
 	classname,
 	size = "lg",
+	disabled=false
 }) {
 	return (
 		<Button
 			variant={variant}
 			type="submit"
 			onClick={btnHandler}
-			className={classname}
+			className={`btn-wrapper ${classname}`}
 			size={size}
+			disabled={disabled}
 		>
 			{label}
 		</Button>

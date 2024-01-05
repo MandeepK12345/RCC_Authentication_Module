@@ -1,10 +1,12 @@
-import { Container, Row } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import ButtonComponent from "../../components/button";
+import Images from "../../utils/images";
 import { setUser } from "../../state";
 import { useNavigate } from "react-router-dom";
 import { routesPath } from "../../router/routes";
 import { toast } from "react-toastify";
+import Avatar from "../../components/avatar";
+import Footer from "../../components/footer";
 import "./index.css";
 
 export default function Dashboard() {
@@ -20,18 +22,29 @@ export default function Dashboard() {
 	};
 
 	return (
-		<Container fluid className="alignCentre p-0">
-			<Row className="user-dashboard">Home Page</Row>
-			<Row className="user-dashboard m-0">
-				Welcome   {" "}
-				<span>
-					{mobileNo}
-					{email}
-				</span>
-			</Row>
-			<Row className="user-dashboard m-0">
-				<ButtonComponent label="Logout" btnHandler={logoutHandler} />
-			</Row>
-		</Container>
+		<div className="rccAuthContainer">
+			<div className="rccAuthHeader">
+				<div className="rccAuthHeaderInner">
+					<div
+						className="logo pointer-cursor"
+						onClick={() => navigate(routesPath.LOGIN)}
+					>
+						<img src={Images.logo} alt="Logo" />
+					</div>
+				</div>
+				<Avatar onClick={logoutHandler} label={mobileNo || email} />
+			</div>
+			<div className="rccAuthBody">
+				<Row className="user-dashboard">
+					Welcome &nbsp;
+					<span>
+						{mobileNo}
+						{email}
+					</span>
+					<span>&nbsp;to the RCC Dashboard</span>
+				</Row>
+			</div>
+			<Footer />
+		</div>
 	);
 }

@@ -1,15 +1,17 @@
+import { useNavigate } from "react-router-dom";
+import { routesPath } from "../router/routes";
 import Images from "../utils/images";
 import Login from "../pages/login";
 import Register from "../pages/signUp";
 import ResetPassword from "../pages/resetPassword";
 import VerifyAccount from "../pages/verifyAccount";
 import ForgotPassword from "../pages/forgotPassword";
-import '../styles/authLayout.css'
-// import Footer from './Footer'
+import "../styles/authLayout.css";
+import Footer from "../components/footer";
 
 export default function AuthLayout({ page }) {
-
-  const getComponentToShow = () => {
+	const navigate = useNavigate();
+	const getComponentToShow = () => {
 		switch (page) {
 			case "login":
 				return <Login />;
@@ -29,16 +31,26 @@ export default function AuthLayout({ page }) {
 		<div className="rccAuthContainer">
 			<div className="rccAuthHeader">
 				<div className="rccAuthHeaderInner">
-					<div className="logo">
+					<div
+						className="logo pointer-cursor"
+						onClick={() => navigate(routesPath.LOGIN)}
+					>
 						<img src={Images.logo} alt="Logo" />
 					</div>
 				</div>
 			</div>
 			<div className="rccAuthBody">
-				<div className="slider"><img class="onboardingImg" src={Images.slider} alt="backgroundImage" role="presentation"/></div>
+				<div className="slider">
+					<img
+						class="onboardingImg"
+						src={Images.slider}
+						alt="backgroundImage"
+						role="presentation"
+					/>
+				</div>
 				<div className="componentContainer">{getComponentToShow(page)}</div>
 			</div>
-			{/* <Footer /> */}
+			<Footer />
 		</div>
 	);
 }

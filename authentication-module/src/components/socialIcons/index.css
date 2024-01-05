@@ -1,0 +1,8 @@
+.foot_social_network{
+    padding: 8px 0px;
+    display: flex;
+    /* justify-content: space-between; */
+    list-style: none;
+    justify-content: flex-start;
+    gap: 20px;
+}

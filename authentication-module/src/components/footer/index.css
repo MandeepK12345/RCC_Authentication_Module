@@ -1,0 +1,39 @@
+.footer {
+    display: flex;
+    justify-content: space-between;
+    background-color: #eddede;
+    padding: 25px;
+    border-top: 1px solid #f3f4f6;
+    .nav{
+        width: 100%;
+ 
+        
+    }
+    .footer-links{
+        padding: 0 20px;
+    }
+    .coypright{
+        padding-right: 300px;
+        margin-right: 40px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+	.footer {
+     flex-direction: column;
+        .nav{
+            width: 100%;
+     
+            &>nav{
+                display: flex;
+    flex-direction: row;
+            }
+        }
+        .footer-links{
+            padding: 0 10px;
+        }
+        .coypright{
+            margin: 10px !important;
+        }
+    }
+}

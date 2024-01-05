@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Row, Container } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -19,6 +20,7 @@ export default function VerifyAccount() {
 	const userInfo = useSelector((state) => state?.user);
 	const location = useLocation();
 	const dispatch = useDispatch();
+	const [disableOtp,setDisableOtp]=useState(true);
 	const { from, contextInfo } = location?.state || {};
 	const fromForgotPaswordScreen = from === "forgotPassword";
 	const fromLoginScreen = from === "login";
@@ -50,7 +52,6 @@ export default function VerifyAccount() {
 		}
 		return { payload, code };
 	};
-
 	const otpApi = (endPoint, payload, fromResendOtp) => {
 		postApiCall(
 			endPoint,
@@ -147,7 +148,6 @@ export default function VerifyAccount() {
 			}
 		);
 	};
-
 	const handleOnChange = (e, name) => {
 		if (e.target.value.length > 1) {
 			e.target.value = e.target.value[0];
@@ -156,8 +156,10 @@ export default function VerifyAccount() {
 		if (e.target.value) {
 			moveFocusToNextInput(name);
 		}
+		if(!e.target.value){
+			setDisableOtp(true);
+		}
 	};
-
 	// Function to move focus to the next input field
 	const moveFocusToNextInput = (currentField) => {
 		const currentIndex = inputFields.indexOf(currentField);
@@ -171,11 +173,14 @@ export default function VerifyAccount() {
 			if (nextFieldRef) {
 				nextFieldRef.focus();
 			}
+			setDisableOtp(true);
 		} else {
 			inputFields.forEach((s) => {
 				otpData[s] = document.getElementById(s)?.value;
 			});
+			setDisableOtp(false);
 		}
+		console.log('otpData',otpData)
 	};
 
 	const handleKeyDown = (e, field) => {
@@ -223,7 +228,7 @@ export default function VerifyAccount() {
 	};
 
 	return (
-		<Container className="alignCentre verifyAccount-wrapper">
+		<Container className="authForm alignCentre verifyAccount-wrapper">
 			<h1>{TextMsg.VerifyAccount.verifyAccount}</h1>
 			<p className="mt-15">
 				{TextMsg.VerifyAccount.sentOTP}&nbsp;
@@ -246,9 +251,30 @@ export default function VerifyAccount() {
 				))}
 			</Row>
 
-			<Row className="mt-15">
-				<ButtonComponent label="Verify OTP" btnHandler={validateOtp} />
-			</Row>
+			<ButtonComponent
+				label="Verify OTP"
+				btnHandler={validateOtp}
+				classname="mt-4"
+				disabled={disableOtp}
+			/>
+			{fromForgotPaswordScreen || fromLoginScreen ? (
+				<ButtonComponent
+					label="Back"
+					btnHandler={() => {
+						navigate(routesPath.LOGIN);
+					}}
+					classname="mt-4"
+				/>
+			) : (
+				<ButtonComponent
+					label="Back"
+					btnHandler={() => {
+						navigate(routesPath.SIGNUP);
+					}}
+					classname="mt-4"
+				/>
+			)}
+
 			<Row className="mt-2">
 				<span>Didn’t receive the code? </span>
 				<a onClick={resendOtp} href="javascript:void(0)" class="link-primary">
