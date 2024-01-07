@@ -151,7 +151,12 @@ export default function Signup() {
 									toast.success(response.data.message, {
 										toastId: "signupSuccess",
 									});
-									navigate(routesPath.VERIFY, { state: { from: "signup" } });
+									navigate(routesPath.VERIFY, {
+										state: {
+											from: "signup",
+											isEmail: radioValue === "1" ? true : false,
+										},
+									});
 								}
 							},
 							(error) => {
@@ -194,8 +199,17 @@ export default function Signup() {
 
 	// multiple country code dropDown Handler
 	const inbuiltPhoneHandler = (_value, data) => {
-		setDataLogin({ ...dataLogin, email: _value });
-		setCountryCode("+" + data.dialCode);
+		const result = _value.substring(data?.dialCode?.length);
+		const errors = {};
+
+		if (result.length < 7) {
+			errors.email = TextMsg.Login.phoneNoMinimumLength;
+		} else if (result.length > 15) {
+			errors.email = TextMsg.Login.phoneNoMaximumLength;
+		}
+		setErrors({ ...errors });
+		setDataLogin({ ...dataLogin, email: result });
+		setCountryCode("+" + data?.dialCode);
 	};
 
 	//handled phone and email fields of tab
@@ -210,7 +224,7 @@ export default function Signup() {
 	return (
 		<Container className="authForm login-wrapper">
 			<h1>{TextMsg.SignUp.heading}</h1>
-				<p>{TextMsg.SignUp.subHeading}</p>
+			<p>{TextMsg.SignUp.subHeading}</p>
 			<Form className="form">
 				<Row>
 					<ButtonGroup className="mb-2 toggleBtn">
@@ -230,33 +244,52 @@ export default function Signup() {
 							</ToggleButton>
 						))}
 					</ButtonGroup>
-					{showPhoneField ? (
-						<PhoneInput
-							className="phoneInput"
-							country="in"
-							enableSearch={true}
-							value={phoneDropDown}
-							onChange={inbuiltPhoneHandler}
-						/>
-					) : (
+					{radioValue === "2" ? (
 						<>
-							<InputGroup className="mb-3">
-								{radioValue === "2" && (
-									<InputGroup.Text
-										id="basic-addon1"
-										onClick={showPhoneFieldHandler}
-									>
-										+91
-									</InputGroup.Text>
-								)}
+							<PhoneInput
+								className="phoneInput"
+								country="in"
+								enableSearch={true}
+								value={phoneDropDown}
+								onChange={inbuiltPhoneHandler}
+							/>
+							{errors.email && (
+								<Form.Text className="input-wrapper__errMsg">
+									{errors.email}
+								</Form.Text>
+							)}
+						</>
+					) : (
+						// <>
+						// 	<InputGroup className="mb-3">
+						// 		<Form.Control
+						// 			type={
+						// 				radioValue === "1"
+						// 					? TextMsg.SignUp.radioValueText
+						// 					: TextMsg.SignUp.radioValueNumber
+						// 			}
+						// 			placeholder={
+						// 				radioValue === "1"
+						// 					? TextMsg.Login.radioValueEmail
+						// 					: TextMsg.Login.radioValuePhone
+						// 			}
+						// 			name={TextMsg.SignUp.email}
+						// 			onChange={handleInputChange}
+						// 			value={dataLogin.email}
+						// 		/>
+						// 	</InputGroup>
+						// 	{errors.email && (
+						// 		<Form.Text className="input-wrapper__errMsg">
+						// 			{errors.email}
+						// 		</Form.Text>
+						// 	)}
+						// </>
+						<>
+							<InputGroup className="mb-2">
 								<Form.Control
-									type={radioValue === "1" ? TextMsg.SignUp.radioValueText : TextMsg.SignUp.radioValueNumber }
-									placeholder={
-										radioValue === "1"
-											? TextMsg.Login.radioValueEmail
-											: TextMsg.Login.radioValuePhone
-									}
-									name={TextMsg.SignUp.email}
+									type="text"
+									placeholder={TextMsg.Login.radioValueEmail}
+									name="email"
 									onChange={handleInputChange}
 									value={dataLogin.email}
 								/>
@@ -273,8 +306,12 @@ export default function Signup() {
 					<>
 						<Row className="login-wrapper__passwordField">
 							<InputComponent
-								type={showPassword ? TextMsg.SignUp.radioValueText : TextMsg.SignUp.radioValuePassword }
-								label= {TextMsg.SignUp.createPassword}
+								type={
+									showPassword
+										? TextMsg.SignUp.radioValueText
+										: TextMsg.SignUp.radioValuePassword
+								}
+								label={TextMsg.SignUp.createPassword}
 								name={TextMsg.SignUp.password}
 								placeholder={TextMsg.SignUp.newPassword}
 								onChange={handleInputChange}
@@ -285,13 +322,17 @@ export default function Signup() {
 								src={showPassword ? Images.showEye : Images.hideEye}
 								className="login-wrapper__eyeImage"
 								onClick={() => setShowPassword(!showPassword)}
-								alt= {TextMsg.SignUp.eyeImage}
+								alt={TextMsg.SignUp.eyeImage}
 							/>
 						</Row>
 						<Row className="login-wrapper__passwordField">
 							<InputComponent
-								type={showConfirmPassword ? TextMsg.SignUp.radioValueText : TextMsg.SignUp.radioValuePassword }
-								label= {TextMsg.SignUp.labelConfirmPassword}
+								type={
+									showConfirmPassword
+										? TextMsg.SignUp.radioValueText
+										: TextMsg.SignUp.radioValuePassword
+								}
+								label={TextMsg.SignUp.labelConfirmPassword}
 								name={TextMsg.SignUp.nameConfirmPassword}
 								placeholder={TextMsg.SignUp.confirmPassword}
 								onChange={handleInputChange}
@@ -302,7 +343,7 @@ export default function Signup() {
 								src={showConfirmPassword ? Images.showEye : Images.hideEye}
 								className="login-wrapper__eyeImage"
 								onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-								alt= {TextMsg.SignUp.eyeImage}
+								alt={TextMsg.SignUp.eyeImage}
 							/>
 						</Row>
 					</>
@@ -310,13 +351,15 @@ export default function Signup() {
 
 				<Row className="mt5">
 					<ButtonComponent
-						label={radioValue === "1" ? TextMsg.SignUp.next : TextMsg.SignUp.sendOtp }
+						label={
+							radioValue === "1" ? TextMsg.SignUp.next : TextMsg.SignUp.sendOtp
+						}
 						btnHandler={submitHandler}
 						disabled={disableSubmitButton}
 					/>
 				</Row>
 				<Row className="mt-2">
-					<span>{TextMsg.SignUp.alreadyHaveAccount}{" "}</span>
+					<span>{TextMsg.SignUp.alreadyHaveAccount} </span>
 					<a
 						onClick={() => navigate(routesPath.LOGIN)}
 						href="javascript:void(0)"
@@ -325,7 +368,7 @@ export default function Signup() {
 						{TextMsg.Login.login}
 					</a>
 				</Row>
-				<SocialIcons/>
+				<SocialIcons />
 			</Form>
 		</Container>
 	);

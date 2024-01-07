@@ -107,6 +107,7 @@ export default function Login() {
 				(response) => {
 					if (response?.status === 200) {
 						if (radioValue === "2") {
+							dispatch(setUser(payload));
 							toast.success(response?.data?.message, {
 								toastId: TextMsg.Login.successToastId,
 							});
@@ -131,13 +132,22 @@ export default function Login() {
 				(error) => {
 					const {
 						response: {
-							data: { message },
+							data: { message , type},
 						},
 					} = error;
 					setDisableSubmitButton(false);
 					toast.error(message, {
 						toastId: TextMsg.Login.errorToastId,
 					});
+					if(type === "EMAIL_NOT_VERIFIED"){
+						navigate(routesPath.VERIFY, {
+							state: {
+							from: "login",
+							contextInfo: { email : email, isEmail : (email)? true:false},
+							
+						}}, )
+						
+					}
 				}
 			);
 		}

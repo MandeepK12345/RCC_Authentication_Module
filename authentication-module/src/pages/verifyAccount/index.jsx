@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Container } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -20,12 +20,19 @@ export default function VerifyAccount() {
 	const userInfo = useSelector((state) => state?.user);
 	const location = useLocation();
 	const dispatch = useDispatch();
-	const [disableOtp,setDisableOtp]=useState(true);
-	const { from, contextInfo } = location?.state || {};
+	const [disableOtp, setDisableOtp] = useState(true);
+	const { from, contextInfo, isEmail } = location?.state || {};
 	const fromForgotPaswordScreen = from === "forgotPassword";
 	const fromLoginScreen = from === "login";
 	const { email, countryCode, mobileNo } = userInfo || {};
 	const phoneNo = mobileNo?.substr(countryCode?.length);
+
+
+	useEffect(() => {
+		if (!userInfo && from !== "forgotPassword") {
+			navigate(routesPath.LOGIN);
+		}
+	}, []);
 
 	const generatePayLoad = () => {
 		const { otp1, otp2, otp3, otp4 } = otpData;
@@ -38,11 +45,19 @@ export default function VerifyAccount() {
 		};
 
 		if (from === "login") {
+			if(contextInfo.isEmail){
+			payload = {
+				email : contextInfo.email,
+				code: 4321 || parseInt(code), // for now hardcoded , will remove it
+			};
+			}
+			else{
 			payload = {
 				countryCode: contextInfo.countryCode,
 				phoneNo: contextInfo.mobile,
 				code: 4321 || parseInt(code), // for now hardcoded , will remove it
 			};
+		}
 		} else if (phoneNo) {
 			payload = {
 				countryCode,
@@ -93,7 +108,12 @@ export default function VerifyAccount() {
 	const getUrl = () => {
 		switch (from) {
 			case "login": {
+				if(contextInfo.isEmail){
+					return endPoint.verifySignupOtp
+				}
+				else{
 				return endPoint.verifyLoginOtp;
+				}
 			}
 			case "forgotPassword": {
 				return endPoint.validateForgotPassword;
@@ -105,11 +125,15 @@ export default function VerifyAccount() {
 	};
 
 	const validateOtp = () => {
+		console.log("_user info is in validateOtp", userInfo);
+		
 		const { code, payload } = generatePayLoad();
 		if (code) {
+			// const emailPayload = fromForgotPaswordScreen? {email: contextInfo.email, otp: parseInt(code)}: {email: emailAddress, code: parseInt(code)}
 			const apiPayLoad = fromForgotPaswordScreen
 				? { email: contextInfo.email, otp: parseInt(code) }
 				: payload;
+			// const apiPayLoad = emailPayload? emailPayload : payload;
 			otpApi(getUrl(), apiPayLoad);
 		}
 	};
@@ -121,6 +145,10 @@ export default function VerifyAccount() {
 			? {
 					countryCode: contextInfo.countryCode,
 					phoneNo: contextInfo.mobile,
+			  }
+			: isEmail
+			? {
+					email: email,
 			  }
 			: {
 					countryCode: countryCode,
@@ -148,6 +176,7 @@ export default function VerifyAccount() {
 			}
 		);
 	};
+
 	const handleOnChange = (e, name) => {
 		if (e.target.value.length > 1) {
 			e.target.value = e.target.value[0];
@@ -156,7 +185,7 @@ export default function VerifyAccount() {
 		if (e.target.value) {
 			moveFocusToNextInput(name);
 		}
-		if(!e.target.value){
+		if (!e.target.value) {
 			setDisableOtp(true);
 		}
 	};
@@ -180,7 +209,7 @@ export default function VerifyAccount() {
 			});
 			setDisableOtp(false);
 		}
-		console.log('otpData',otpData)
+		console.log("otpData", otpData);
 	};
 
 	const handleKeyDown = (e, field) => {
@@ -196,6 +225,7 @@ export default function VerifyAccount() {
 	};
 
 	const resendOtp = () => {
+		console.log("_user info is in resendOtp", userInfo);
 		if (fromForgotPaswordScreen) {
 			otpApi(endPoint.resendOtp, { email: contextInfo.email }, true);
 		} else {
@@ -239,6 +269,7 @@ export default function VerifyAccount() {
 				{inputFields.map((item, index) => (
 					<input
 						id={item}
+						tabIndex={0}
 						key={index}
 						className="otpInput"
 						type="text"

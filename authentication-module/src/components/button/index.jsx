@@ -18,6 +18,7 @@ export default function ButtonComponent({
 			className={`btn-wrapper ${classname}`}
 			size={size}
 			disabled={disabled}
+			tabIndex={0}
 		>
 			{label}
 		</Button>
