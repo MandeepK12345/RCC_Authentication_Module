@@ -129,6 +129,7 @@ function ResetPassword() {
 						onChange={handleInputChange}
 						value={resetPasswordData.confirmPassword}
 						error={errors.confirmPassword}
+						onKeyDown ={submitHandler}  //handled submit press from keyboard 	
 					/>
 					<img
 						src={showConfirmPassword ? Images.showEye : Images.hideEye}

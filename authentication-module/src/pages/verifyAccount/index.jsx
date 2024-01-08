@@ -34,6 +34,20 @@ export default function VerifyAccount() {
 		}
 	}, []);
 
+	useEffect(() => {
+		const handleKeyDown = (event) => {
+		  if (event.key === 'Enter') {
+			validateOtp();
+		  }
+		};
+	  
+		document.addEventListener('keydown', handleKeyDown);
+	  
+		return () => {
+		  document.removeEventListener('keydown', handleKeyDown);
+		};
+	  }, []);
+
 	const generatePayLoad = () => {
 		const { otp1, otp2, otp3, otp4 } = otpData;
 		let code = undefined;
@@ -278,6 +292,7 @@ export default function VerifyAccount() {
 							handleOnChange(e, item);
 						}}
 						onKeyDown={(e) => handleKeyDown(e, item)}
+						onEnterKeyPress={validateOtp} 
 					/>
 				))}
 			</Row>
