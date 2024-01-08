@@ -41,8 +41,6 @@ export default function Signup() {
 	const [radioValue, setRadioValue] = useState("1");
 	const [errors, setErrors] = useState({});
 	const [disableSubmitButton, setDisableSubmitButton] = useState(true);
-	const [showPhoneField, setShowPhoneField] = useState(false);
-	const [phoneDropDown, setPhoneDropDown] = useState("");
 	const [countryCode, setCountryCode] = useState("+91");
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -192,11 +190,6 @@ export default function Signup() {
 		navigate(routesPath.LOGIN);
 	};
 
-	const showPhoneFieldHandler = () => {
-		setShowPhoneField(true);
-		setPhoneDropDown(dataLogin.email);
-	};
-
 	// multiple country code dropDown Handler
 	const inbuiltPhoneHandler = (_value, data) => {
 		const result = _value.substring(data?.dialCode?.length);
@@ -214,7 +207,6 @@ export default function Signup() {
 
 	//handled phone and email fields of tab
 	const toggleHandler = (value) => {
-		setShowPhoneField(false);
 		setErrors({});
 		setDataLogin({ ...dataLogin, email: "" });
 		setRadioValue(value);
@@ -247,12 +239,14 @@ export default function Signup() {
 					{radioValue === "2" ? (
 						<>
 							<PhoneInput
+								alwaysDefaultMask={false}
 								className="phoneInput"
 								country="in"
 								enableSearch={true}
-								value={phoneDropDown}
 								onChange={inbuiltPhoneHandler}
-								onEnterKeyPress= {submitHandler}  // handled enter press from keyboard
+								placeholder={TextMsg.Login.radioValuePhone}
+								countryCodeEditable={false}
+								onEnterKeyPress={submitHandler} // handled enter press from keyboard
 							/>
 							{errors.email && (
 								<Form.Text className="input-wrapper__errMsg">
