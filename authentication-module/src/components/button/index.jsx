@@ -13,6 +13,7 @@ export default function ButtonComponent({
 	return (
 		<Button
 			variant={variant}
+			aria-label={label}
 			type="submit"
 			onClick={btnHandler}
 			className={`btn-wrapper ${classname}`}

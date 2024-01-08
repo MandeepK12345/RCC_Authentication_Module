@@ -209,6 +209,7 @@ export default function Login() {
 								onChange={inbuiltPhoneHandler}
 								placeholder={TextMsg.Login.radioValuePhone}
 								countryCodeEditable={false}
+								onEnterKeyPress= {submitHandler} // handled enter press from keyboard
 							/>
 							{errors.email && (
 								<Form.Text className="input-wrapper__errMsg">

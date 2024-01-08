@@ -252,6 +252,7 @@ export default function Signup() {
 								enableSearch={true}
 								value={phoneDropDown}
 								onChange={inbuiltPhoneHandler}
+								onEnterKeyPress= {submitHandler}  // handled enter press from keyboard
 							/>
 							{errors.email && (
 								<Form.Text className="input-wrapper__errMsg">
