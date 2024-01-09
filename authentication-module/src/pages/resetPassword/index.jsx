@@ -108,7 +108,7 @@ function ResetPassword() {
 						type={showPassword ? "text" : "password"}
 						label="New Password"
 						name="password"
-						placeholder={TextMsg.SignUp.newPassword}
+						placeholder="New Password"
 						onChange={handleInputChange}
 						value={resetPasswordData.password}
 						error={errors.password}
@@ -123,9 +123,9 @@ function ResetPassword() {
 				<Row className="login-wrapper__passwordField">
 					<InputComponent
 						type={showConfirmPassword ? "text" : "password"}
-						label="Confirm Password"
+						label="Confirm New Password"
 						name="confirmPassword"
-						placeholder={TextMsg.SignUp.confirmPassword}
+						placeholder="Confirm New Password"
 						onChange={handleInputChange}
 						value={resetPasswordData.confirmPassword}
 						error={errors.confirmPassword}
