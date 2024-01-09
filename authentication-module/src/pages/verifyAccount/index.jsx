@@ -9,6 +9,9 @@ import { postApiCall } from "../../api/methods";
 import { setUser } from "../../state";
 import { routesPath } from "../../router/routes";
 import TextMsg from "../../constants/textMessages";
+import {
+	phonePattern,
+} from "../../utils/common";
 import "./index.css";
 
 const inputFields = ["otp1", "otp2", "otp3", "otp4"];
@@ -16,6 +19,7 @@ const inputFields = ["otp1", "otp2", "otp3", "otp4"];
 const otpData = {};
 
 export default function VerifyAccount() {
+	const [timer, setTimer] = useState(30);
 	const navigate = useNavigate();
 	const userInfo = useSelector((state) => state?.user);
 	const location = useLocation();
@@ -27,26 +31,45 @@ export default function VerifyAccount() {
 	const { email, countryCode, mobileNo } = userInfo || {};
 	const phoneNo = mobileNo?.substr(countryCode?.length);
 
-
 	useEffect(() => {
 		if (!userInfo && from !== "forgotPassword") {
 			navigate(routesPath.LOGIN);
-		}
+		} 
 	}, []);
+
+	React.useEffect(() => {
+		const TimerInt =
+			timer > 0 &&
+			setInterval(() => {
+				setTimer((time) => time - 1);
+			}, 1000);
+		return () => {
+			clearInterval(TimerInt);
+		};
+	}, [timer]);
+
+	const formatTime = (seconds) => {
+		const minutes = Math.floor(seconds / 60);
+		const remainingSeconds = seconds % 60;
+
+		return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+			.toString()
+			.padStart(2, "0")}`;
+	};
 
 	useEffect(() => {
 		const handleKeyDown = (event) => {
-		  if (event.key === 'Enter') {
-			validateOtp();
-		  }
+			if (event.key === "Enter") {
+				validateOtp();
+			}
 		};
-	  
-		document.addEventListener('keydown', handleKeyDown);
-	  
+
+		document.addEventListener("keydown", handleKeyDown);
+
 		return () => {
-		  document.removeEventListener('keydown', handleKeyDown);
+			document.removeEventListener("keydown", handleKeyDown);
 		};
-	  }, []);
+	}, []);
 
 	const generatePayLoad = () => {
 		const { otp1, otp2, otp3, otp4 } = otpData;
@@ -59,19 +82,18 @@ export default function VerifyAccount() {
 		};
 
 		if (from === "login") {
-			if(contextInfo.isEmail){
-			payload = {
-				email : contextInfo.email,
-				code: 4321 || parseInt(code), // for now hardcoded , will remove it
-			};
+			if (contextInfo.isEmail) {
+				payload = {
+					email: contextInfo.email,
+					code: 4321 || parseInt(code), // for now hardcoded , will remove it
+				};
+			} else {
+				payload = {
+					countryCode: contextInfo.countryCode,
+					phoneNo: contextInfo.mobile,
+					code: 4321 || parseInt(code), // for now hardcoded , will remove it
+				};
 			}
-			else{
-			payload = {
-				countryCode: contextInfo.countryCode,
-				phoneNo: contextInfo.mobile,
-				code: 4321 || parseInt(code), // for now hardcoded , will remove it
-			};
-		}
 		} else if (phoneNo) {
 			payload = {
 				countryCode,
@@ -122,11 +144,10 @@ export default function VerifyAccount() {
 	const getUrl = () => {
 		switch (from) {
 			case "login": {
-				if(contextInfo.isEmail){
-					return endPoint.verifySignupOtp
-				}
-				else{
-				return endPoint.verifyLoginOtp;
+				if (contextInfo.isEmail) {
+					return endPoint.verifySignupOtp;
+				} else {
+					return endPoint.verifyLoginOtp;
 				}
 			}
 			case "forgotPassword": {
@@ -139,22 +160,18 @@ export default function VerifyAccount() {
 	};
 
 	const validateOtp = () => {
-		console.log("_user info is in validateOtp", userInfo);
-		
 		const { code, payload } = generatePayLoad();
 		if (code) {
-			// const emailPayload = fromForgotPaswordScreen? {email: contextInfo.email, otp: parseInt(code)}: {email: emailAddress, code: parseInt(code)}
 			const apiPayLoad = fromForgotPaswordScreen
 				? { email: contextInfo.email, otp: parseInt(code) }
 				: payload;
-			// const apiPayLoad = emailPayload? emailPayload : payload;
 			otpApi(getUrl(), apiPayLoad);
 		}
 	};
 
 	const resendOtpLoginSignup = () => {
 		const url = endPoint.getOtp;
-		const { countryCode, mobileNo } = userInfo || {};
+		const { countryCode } = userInfo || {};
 		let apiPayLoad = fromLoginScreen
 			? {
 					countryCode: contextInfo.countryCode,
@@ -196,8 +213,10 @@ export default function VerifyAccount() {
 			e.target.value = e.target.value[0];
 			return;
 		}
-		if (e.target.value) {
+		if (e.target.value?.match(phonePattern)) {
 			moveFocusToNextInput(name);
+		}else{
+			e.target.value=null;
 		}
 		if (!e.target.value) {
 			setDisableOtp(true);
@@ -223,7 +242,6 @@ export default function VerifyAccount() {
 			});
 			setDisableOtp(false);
 		}
-		console.log("otpData", otpData);
 	};
 
 	const handleKeyDown = (e, field) => {
@@ -239,7 +257,7 @@ export default function VerifyAccount() {
 	};
 
 	const resendOtp = () => {
-		console.log("_user info is in resendOtp", userInfo);
+		setTimer(30);
 		if (fromForgotPaswordScreen) {
 			otpApi(endPoint.resendOtp, { email: contextInfo.email }, true);
 		} else {
@@ -251,8 +269,13 @@ export default function VerifyAccount() {
 		let result = null;
 		switch (from) {
 			case "login": {
-				result = <span>{contextInfo.mobile}</span>;
-				break;
+				if (contextInfo.isEmail) {
+					result = <span>{contextInfo.email}</span>;
+					break;
+				} else {
+					result = <span>{contextInfo.countryCode + contextInfo.mobile}</span>;
+					break;
+				}
 			}
 			case "forgotPassword": {
 				result = <span>{contextInfo.email} to reset your password.</span>;
@@ -292,7 +315,7 @@ export default function VerifyAccount() {
 							handleOnChange(e, item);
 						}}
 						onKeyDown={(e) => handleKeyDown(e, item)}
-						onEnterKeyPress={validateOtp} 
+						onEnterKeyPress={validateOtp}
 					/>
 				))}
 			</Row>
@@ -323,9 +346,14 @@ export default function VerifyAccount() {
 
 			<Row className="mt-2">
 				<span>Didn’t receive the code? </span>
-				<a onClick={resendOtp} href="javascript:void(0)" class="link-primary">
+				<a
+					onClick={resendOtp }
+					href="javascript:void(0)"
+					class={`link-primary ${timer>0?'resend-otp-disable':''}`}
+				>
 					{TextMsg.VerifyAccount.resendOTP}
 				</a>
+				<p className="link">{formatTime(timer)}</p>
 			</Row>
 		</Container>
 	);

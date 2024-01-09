@@ -136,17 +136,17 @@ export default function Login() {
 						},
 					} = error;
 					setDisableSubmitButton(false);
-					toast.error(message, {
-						toastId: TextMsg.Login.errorToastId,
-					});
 					if(type === "EMAIL_NOT_VERIFIED"){
 						navigate(routesPath.VERIFY, {
 							state: {
 							from: "login",
-							contextInfo: { email : email, isEmail : (email)? true:false},
-							
-						}}, )
-						
+							contextInfo: { email : email, isEmail : (email)? true:false},	
+						}}, )	
+					}
+					else{
+						toast.error(message, {
+							toastId: TextMsg.Login.errorToastId,
+						});
 					}
 				}
 			);
@@ -209,7 +209,7 @@ export default function Login() {
 								onChange={inbuiltPhoneHandler}
 								placeholder={TextMsg.Login.radioValuePhone}
 								countryCodeEditable={false}
-								onEnterKeyPress= {submitHandler} // handled enter press from keyboard
+								onEnterKeyPress= {submitHandler} 
 							/>
 							{errors.email && (
 								<Form.Text className="input-wrapper__errMsg">
