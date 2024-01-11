@@ -31,14 +31,15 @@ const loginToggle = [
 
 //login component
 export default function Login() {
-	const [showPassword, setShowPassword] = React.useState(false);
-	const [dataLogin, setDataLogin] = React.useState({
+	const [showPassword, setShowPassword] = useState(false);
+	const [dataLogin, setDataLogin] = useState({
 		email: "",
 		password: "",
 	});
 	const [radioValue, setRadioValue] = useState("1");
 	const [errors, setErrors] = useState({});
 	const [disableSubmitButton, setDisableSubmitButton] = useState(true);
+	const [rememberMe, setRememberMe] = useState(false);
 	const [countryCode, setCountryCode] = useState("+91");
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -64,6 +65,21 @@ export default function Login() {
 		}
 	}, [dataLogin]);
 
+	useEffect(() => {
+		const storedEmailAndPassword = JSON.parse(localStorage.getItem("EmailAndPassword"))
+		console.log("__storedEmailAndPassword", storedEmailAndPassword);
+		const storedPhoneNo = localStorage.getItem("Phone Number");
+		if (storedEmailAndPassword) {
+			setRememberMe(true);
+			setDataLogin(storedEmailAndPassword);
+		} else if (storedPhoneNo) {
+			setRememberMe(true);
+			setDataLogin({
+				email: storedPhoneNo,
+			});
+		}
+	}, []);
+
 	// Login handler
 	const submitHandler = (event) => {
 		event.preventDefault();
@@ -87,6 +103,19 @@ export default function Login() {
 			}
 		}
 		setErrors({ ...errors });
+
+		if (radioValue === "1" && rememberMe) {
+			localStorage.setItem("EmailAndPassword",JSON.stringify({
+				"email" : email,
+				"password" : password
+			}))
+		} else if (radioValue === "2" && rememberMe) {
+			localStorage.setItem("Phone Number", email);
+		} else {
+			localStorage.removeItem("EmailAndPassword");
+			localStorage.removeItem("Phone Number");
+		}
+
 		if (!Object.keys(errors).length) {
 			setDisableSubmitButton(true);
 			//login api call
@@ -132,18 +161,18 @@ export default function Login() {
 				(error) => {
 					const {
 						response: {
-							data: { message , type},
+							data: { message, type },
 						},
 					} = error;
 					setDisableSubmitButton(false);
-					if(type === "EMAIL_NOT_VERIFIED"){
+					if (type === "EMAIL_NOT_VERIFIED") {
 						navigate(routesPath.VERIFY, {
 							state: {
-							from: "login",
-							contextInfo: { email : email, isEmail : (email)? true:false},	
-						}}, )	
-					}
-					else{
+								from: "login",
+								contextInfo: { email: email, isEmail: email ? true : false },
+							},
+						});
+					} else {
 						toast.error(message, {
 							toastId: TextMsg.Login.errorToastId,
 						});
@@ -151,6 +180,7 @@ export default function Login() {
 				}
 			);
 		}
+		// setDataLogin({ password: "", email: "" });
 	};
 	// multiple country code dropDown Handler
 	const inbuiltPhoneHandler = (_value, data) => {
@@ -174,7 +204,6 @@ export default function Login() {
 		setRadioValue(value);
 		setCountryCode("+91");
 	};
-
 	return (
 		<Container className="authForm login-wrapper">
 			<h1>{TextMsg.Login.heading}</h1>
@@ -201,6 +230,7 @@ export default function Login() {
 
 					{radioValue === "2" ? (
 						<>
+							<label>Phone Number</label>
 							<PhoneInput
 								alwaysDefaultMask={false}
 								className="phoneInput"
@@ -209,17 +239,26 @@ export default function Login() {
 								onChange={inbuiltPhoneHandler}
 								placeholder={TextMsg.Login.radioValuePhone}
 								countryCodeEditable={false}
-								onEnterKeyPress= {submitHandler} 
+								onEnterKeyPress={submitHandler}
 							/>
 							{errors.email && (
 								<Form.Text className="input-wrapper__errMsg">
 									{errors.email}
 								</Form.Text>
 							)}
+
+							<Form.Check
+								className="mt-4"
+								type="checkbox"
+								label="Remember me"
+								onChange={() => setRememberMe(!rememberMe)}
+								checked={rememberMe}
+							/>
 						</>
 					) : (
 						<>
-							<InputGroup className="mb-2">
+							<Form.Group className="mb-4 input-wrapper">
+								<Form.Label className="d-flex">Email</Form.Label>
 								<Form.Control
 									type="text"
 									placeholder={TextMsg.Login.radioValueEmail}
@@ -227,7 +266,7 @@ export default function Login() {
 									onChange={handleInputChange}
 									value={dataLogin.email}
 								/>
-							</InputGroup>
+							</Form.Group>
 							{errors.email && (
 								<Form.Text className="input-wrapper__errMsg">
 									{errors.email}
@@ -260,7 +299,13 @@ export default function Login() {
 								alt="eyeImage"
 							/>
 						</Row>
-						<Row className="mt-2  forgot-password">
+						<Row className="forgot-password">
+							<Form.Check
+								type="checkbox"
+								label="Remember me"
+								onChange={() => setRememberMe(!rememberMe)}
+								checked={rememberMe}
+							/>
 							<a
 								onClick={() => navigate(routesPath.FORGOTPASSWORD)}
 								href="javascript:void(0)"
@@ -281,7 +326,7 @@ export default function Login() {
 					/>
 				</Row>
 				<Row className="mt-2">
-					<span>{TextMsg.Login.dontHaveAccount}</span>
+					<span>{TextMsg.Login.dontHaveAccount}&nbsp;</span>
 					<a
 						onClick={() => navigate(routesPath.SIGNUP)}
 						href="javascript:void(0)"

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import { useDispatch } from "react-redux";
 import "react-phone-input-2/lib/bootstrap.css";
-import { Form, Row, Container, InputGroup } from "react-bootstrap";
+import { Form, Row, Container} from "react-bootstrap";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import { setUser } from "../../state";
@@ -36,12 +36,13 @@ export default function Signup() {
 	const [dataLogin, setDataLogin] = useState({
 		email: "",
 		password: "",
-		confirmPassword: "",
+		confirmPassword: ""
 	});
 	const [radioValue, setRadioValue] = useState("1");
 	const [errors, setErrors] = useState({});
 	const [disableSubmitButton, setDisableSubmitButton] = useState(true);
 	const [countryCode, setCountryCode] = useState("+91");
+	const [agreeTerms, setAgreeTerms] = useState(false);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
@@ -60,136 +61,135 @@ export default function Signup() {
 			setDisableSubmitButton(
 				dataLogin?.email?.length &&
 					dataLogin?.password?.length &&
-					dataLogin?.confirmPassword?.length
+					dataLogin?.confirmPassword?.length &&
+					agreeTerms
 					? false
 					: true
 			);
 		} else if (radioValue === "2") {
-			setDisableSubmitButton(dataLogin?.email?.length ? false : true);
+			setDisableSubmitButton(dataLogin?.email?.length && agreeTerms ? false : true);
 		}
-	}, [dataLogin.email, dataLogin.password, dataLogin.confirmPassword]);
+	}, [dataLogin.email, dataLogin.password, dataLogin.confirmPassword, agreeTerms]);
 
 	//SignUp handler
 	const submitHandler = (event) => {
 		event.preventDefault();
-		const { email, password, confirmPassword } = dataLogin;
-		const errors = {};
-		if (!email) {
-			errors.email =
-				radioValue === "1"
-					? TextMsg.Login.emailRequired
-					: TextMsg.Login.phoneRequired;
-		} else if (radioValue === "2" && email && !email.match(phonePattern)) {
-			errors.email = TextMsg.Login.validMobile;
-		} else if (radioValue === "1" && email && !email.match(emailPattern)) {
-			errors.email = TextMsg.Login.validEmail;
-		}
-		if (radioValue === "1") {
-			if (!password) {
-				errors.password = TextMsg.Login.passwordUndefined;
-			} else if (!password.match(passwordPattern)) {
-				errors.password = TextMsg.Login.validPassword;
+		if (agreeTerms) {
+			const { email, password, confirmPassword } = dataLogin;
+			const errors = {};
+			if (!email) {
+				errors.email =
+					radioValue === "1"
+						? TextMsg.Login.emailRequired
+						: TextMsg.Login.phoneRequired;
+			} else if (radioValue === "2" && email && !email.match(phonePattern)) {
+				errors.email = TextMsg.Login.validMobile;
+			} else if (radioValue === "1" && email && !email.match(emailPattern)) {
+				errors.email = TextMsg.Login.validEmail;
 			}
+			if (radioValue === "1") {
+				if (!password) {
+					errors.password = TextMsg.Login.passwordUndefined;
+				} else if (!password.match(passwordPattern)) {
+					errors.password = TextMsg.Login.validPassword;
+				}
 
-			if (!confirmPassword) {
-				errors.confirmPassword = TextMsg.Login.passwordUndefined;
-			} else if (!confirmPassword.match(passwordPattern)) {
-				errors.confirmPassword = TextMsg.Login.validPassword;
+				if (!confirmPassword) {
+					errors.confirmPassword = TextMsg.Login.passwordUndefined;
+				} else if (!confirmPassword.match(passwordPattern)) {
+					errors.confirmPassword = TextMsg.Login.validPassword;
+				}
+
+				if (password !== confirmPassword) {
+					errors.confirmPassword = TextMsg.SignUp.confirmPasswordField;
+				}
 			}
-
-			if (password !== confirmPassword) {
-				errors.confirmPassword = TextMsg.SignUp.confirmPasswordField;
-			}
-		}
-		setErrors({ ...errors });
-		if (!Object.keys(errors).length) {
-			setDisableSubmitButton(true);
-			//login api call
-			let payload = {
-				email,
-				password,
-				confirmPassword,
-			};
-
-			if (radioValue === "2") {
-				payload = {
-					countryCode: countryCode,
-					phoneNo: email,
+			setErrors({ ...errors });
+			if (!Object.keys(errors).length) {
+				setDisableSubmitButton(true);
+				//login api call
+				let payload = {
+					email,
+					password,
+					confirmPassword,
 				};
-			}
 
-			// Sign Up API call
-			postApiCall(
-				endPoint.userSignup,
-				payload,
-				(response) => {
-					if (response.data.httpCode === 200) {
-						const {
-							data: { email, countryCode },
-							message,
-						} = response?.data;
+				if (radioValue === "2") {
+					payload = {
+						countryCode,
+						phoneNo: email,
+					};
+				}
 
-						let payloadGenerateOtp = { email };
-						dispatch(setUser({ ...response?.data?.data }));
+				// Sign Up API call
+				postApiCall(
+					endPoint.userSignup,
+					payload,
+					(response) => {
+						if (response.data.httpCode === 200) {
+							const {
+								data: { email, countryCode }
+							} = response?.data;
 
-						if (radioValue === "2") {
-							payloadGenerateOtp = {
-								countryCode,
-								phoneNo: dataLogin?.email,
-							};
-						}
+							let payloadGenerateOtp = { email };
+							dispatch(setUser({ ...response?.data?.data }));
 
-						// generate OTP api after successful signup
+							if (radioValue === "2") {
+								payloadGenerateOtp = {
+									countryCode,
+									phoneNo: dataLogin?.email,
+								};
+							}
 
-						postApiCall(
-							endPoint.generateOTP,
-							payloadGenerateOtp,
-							(response) => {
-								if (response?.data.httpCode === 200) {
-									toast.success(response.data.message, {
-										toastId: "signupSuccess",
-									});
-									navigate(routesPath.VERIFY, {
-										state: {
-											from: "signup",
-											isEmail: radioValue === "1" ? true : false,
+							// generate OTP api after successful signup
+
+							postApiCall(
+								endPoint.generateOTP,
+								payloadGenerateOtp,
+								(response) => {
+									if (response?.data.httpCode === 200) {
+										toast.success(response.data.message, {
+											toastId: "signupSuccess",
+										});
+										navigate(routesPath.VERIFY, {
+											state: {
+												from: "signup",
+												isEmail: radioValue === "1" ? true : false,
+											},
+										});
+									}
+								},
+								(error) => {
+									const {
+										response: {
+											data: { message },
 										},
+									} = error;
+									toast.error(message, {
+										toastId: "signupError",
 									});
 								}
+							);
+						}
+						setDisableSubmitButton(false);
+					},
+					(error) => {
+						const {
+							response: {
+								data: { message },
 							},
-							(error) => {
-								const {
-									response: {
-										data: { message },
-									},
-								} = error;
-								toast.error(message, {
-									toastId: "signupError",
-								});
-							}
-						);
+						} = error;
+						setDisableSubmitButton(false);
+						toast.error(message, {
+							toastId: "signupError",
+						});
 					}
-					setDisableSubmitButton(false);
-				},
-				(error) => {
-					const {
-						response: {
-							data: { message },
-						},
-					} = error;
-					setDisableSubmitButton(false);
-					toast.error(message, {
-						toastId: "signupError",
-					});
-				}
-			);
+				);
+			}
+		} else {
+			alert("Please agree to the terms and conditions");
 		}
 	};
-
-	const loginButtonHandler = () => {
-		navigate(routesPath.LOGIN);
-	};
-
 	// multiple country code dropDown Handler
 	const inbuiltPhoneHandler = (_value, data) => {
 		const result = _value.substring(data?.dialCode?.length);
@@ -208,9 +208,13 @@ export default function Signup() {
 	//handled phone and email fields of tab
 	const toggleHandler = (value) => {
 		setErrors({});
-		setDataLogin({ ...dataLogin, email: "" });
+		setDataLogin({ password: "", email: "" });
+		setAgreeTerms(false)
 		setRadioValue(value);
 		setCountryCode("+91");
+	};
+	const handleCheckboxChange = () => {
+		setAgreeTerms(!agreeTerms);
 	};
 
 	return (
@@ -238,8 +242,9 @@ export default function Signup() {
 					</ButtonGroup>
 					{radioValue === "2" ? (
 						<>
+							<label>Phone Number</label>
 							<PhoneInput
-								alwaysDefaultMask={false}
+								// alwaysDefaultMask={false}
 								className="phoneInput"
 								country="in"
 								enableSearch={true}
@@ -255,32 +260,10 @@ export default function Signup() {
 							)}
 						</>
 					) : (
-						// <>
-						// 	<InputGroup className="mb-3">
-						// 		<Form.Control
-						// 			type={
-						// 				radioValue === "1"
-						// 					? TextMsg.SignUp.radioValueText
-						// 					: TextMsg.SignUp.radioValueNumber
-						// 			}
-						// 			placeholder={
-						// 				radioValue === "1"
-						// 					? TextMsg.Login.radioValueEmail
-						// 					: TextMsg.Login.radioValuePhone
-						// 			}
-						// 			name={TextMsg.SignUp.email}
-						// 			onChange={handleInputChange}
-						// 			value={dataLogin.email}
-						// 		/>
-						// 	</InputGroup>
-						// 	{errors.email && (
-						// 		<Form.Text className="input-wrapper__errMsg">
-						// 			{errors.email}
-						// 		</Form.Text>
-						// 	)}
-						// </>
+						
 						<>
-							<InputGroup className="mb-2">
+							<Form.Group className="mb-4 input-wrapper">
+								<Form.Label className="d-flex">Email</Form.Label>
 								<Form.Control
 									type="text"
 									placeholder={TextMsg.Login.radioValueEmail}
@@ -288,7 +271,7 @@ export default function Signup() {
 									onChange={handleInputChange}
 									value={dataLogin.email}
 								/>
-							</InputGroup>
+							</Form.Group>
 							{errors.email && (
 								<Form.Text className="input-wrapper__errMsg">
 									{errors.email}
@@ -343,7 +326,19 @@ export default function Signup() {
 						</Row>
 					</>
 				)}
-
+				<Row className="mt5">
+						<Form.Check
+						type="checkbox"
+						label = {
+							<>
+							I agree to {''} <a href="https://surface.appinventive.com/site/terms-and-conditions" target="_blank">Terms and Conditions </a>
+							and {''}<a href="https://appinventiv.com/privacy-policy/" target ="_blank">Privacy Policy</a>
+							{' '}of application
+							</>
+						}
+						onChange={handleCheckboxChange}
+						checked={agreeTerms} />
+				</Row>
 				<Row className="mt5">
 					<ButtonComponent
 						label={

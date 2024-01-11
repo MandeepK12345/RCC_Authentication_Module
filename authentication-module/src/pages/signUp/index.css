@@ -1,3 +1,15 @@
 .mb-2{
     width:100%
 }
+.col-sm-9{
+    padding: 0px !important;
+}
+.col-sm-2{
+    padding: 0px !important;
+}
+/* .form-control{
+    width: 5px;
+} */
+mb-4 input-wrapper{
+    width: 0px;
+}

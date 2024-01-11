@@ -15,10 +15,6 @@
 	font-weight: 600;
 	font-size: 30px;
 }
-.mb-3 {
-	display: flex;
-	justify-content: space-between;
-}
 
 .mt5 {
 	margin-top: 5px;
@@ -42,18 +38,7 @@
 		width: 100%;
 	}
 }
-
-.mt-2 {
-	gap: 0.5rem;
+.forgot-password {
+	display: flex;
+	justify-content: space-between;
 }
-
-.mb-2 {
-	width: 100%;
-}
-.forgot-password{
-	justify-content: flex-end;
-
-}
-/* .link-primary{
-	margin-top: -14px;
-} */
